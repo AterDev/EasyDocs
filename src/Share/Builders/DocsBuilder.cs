@@ -135,6 +135,9 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                                 Path = homepagePath,
                                 Content = htmlContent
                             };
+                        }
+                        if (isFirstDoc)
+                        {
                             isFirstDoc = false;
                         }
                     }
