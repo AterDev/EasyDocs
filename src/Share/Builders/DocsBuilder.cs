@@ -32,6 +32,8 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         tplContent = tplContent.Replace("@{Name}", WebInfo.Name);
 
         var genFiles = new List<GenFile>();
+        // Track first doc for each docInfo to generate static homepage
+        var docHomepages = new Dictionary<string, GenFile>();
 
         foreach (var docInfo in DocInfos)
         {
@@ -82,9 +84,11 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                         {
                             DocMenus.Remove(docInfo.Name);
                         }
-                        DocMenus.Add(docInfo.Name, firstDoc.HtmlPath);
+                        // Update DocMenus to point to the static homepage instead of firstDoc.HtmlPath
+                        DocMenus.Add(docInfo.Name, $"{docInfo.Name}.html");
                     }
                     // md 文件
+                    bool isFirstDoc = true;
                     foreach (var doc in docs)
                     {
                         string markdown = File.ReadAllText(doc.Path);
@@ -120,6 +124,22 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                             Path = outputFilePath,
                             Content = htmlContent
                         });
+
+                        // Generate static homepage for the first doc of each docInfo
+                        if (isFirstDoc && !docHomepages.ContainsKey(docInfo.Name))
+                        {
+                            var homepagePath = Path.Combine(outputDocPath, $"{docInfo.Name}.html");
+                            docHomepages[docInfo.Name] = new GenFile
+                            {
+                                Name = $"{docInfo.Name}.html",
+                                Path = homepagePath,
+                                Content = htmlContent
+                            };
+                        }
+                        if (isFirstDoc)
+                        {
+                            isFirstDoc = false;
+                        }
                     }
 
                     // 其他资源文件
@@ -153,6 +173,14 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             genFile.Content = genFile.Content?.Replace("@{NavMenus}", navMenuTmp);
             File.WriteAllText(genFile.Path, genFile.Content);
             Command.LogInfo($"Generate {genFile.Path}");
+        }
+
+        // Generate static homepage files for each doc
+        foreach (var homepage in docHomepages.Values)
+        {
+            homepage.Content = homepage.Content?.Replace("@{NavMenus}", navMenuTmp);
+            File.WriteAllText(homepage.Path, homepage.Content);
+            Command.LogSuccess($"Generate doc homepage: {homepage.Path}");
         }
     }
 
