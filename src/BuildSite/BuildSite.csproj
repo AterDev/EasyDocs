@@ -1,49 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <PackAsTool>true</PackAsTool>
-        <ToolCommandName>ezdoc</ToolCommandName>
-        <PackageOutputPath>./nupkg</PackageOutputPath>
-        <AssemblyVersion>2.0.0</AssemblyVersion>
-        <PackageId>Ater.EasyDocs</PackageId>
-        <Version>2.0.1</Version>
-        <Description>Fast and lightweight static website generation tool!</Description>
-        <Authors>NilTor</Authors>
-        <Company>Atersoft</Company>
-        <Copyright>Atersoft</Copyright>
-        <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/AterDev/easyblog</PackageProjectUrl>
-        <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/AterDev/easyblog.git</RepositoryUrl>
-        <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <PackageReleaseNotes>完善博客页</PackageReleaseNotes>
-        <PackageIcon>logo.jpg</PackageIcon>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <AssemblyName>$(MSBuildProjectName)</AssemblyName>
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageTags>ater;cli;code generate;angular;webapi;asp.net core</PackageTags>
-        <Nullable>enable</Nullable>
-        <Title>EasyDocs</Title>
-        <SatelliteResourceLanguages>None</SatelliteResourceLanguages>
-    </PropertyGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Share\Share.csproj" />
-    </ItemGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PackAsTool>true</PackAsTool>
+		<ToolCommandName>ezdoc</ToolCommandName>
+		<PackageOutputPath>./nupkg</PackageOutputPath>
+		<PackageId>Ater.EasyDocs</PackageId>
+		<Version>2.0.1</Version>
+		<Description>Fast and lightweight static website generation tool!</Description>
+		<Authors>NilTor</Authors>
+		<Company>Atersoft</Company>
+		<Copyright>Atersoft</Copyright>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/AterDev/easyblog</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/AterDev/easyblog.git</RepositoryUrl>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageReleaseNotes>完善博客页</PackageReleaseNotes>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageTags>ater;cli;code generate;angular;webapi;asp.net core</PackageTags>
+		<Nullable>enable</Nullable>
+		<Title>EasyDocs</Title>
+		<SatelliteResourceLanguages>None</SatelliteResourceLanguages>
+		<PackageIcon>logo.jpg</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Share\Share.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="logo.jpg">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
-    <ItemGroup>
-        <None Update="logo.jpg">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
-        <None Update="README.md">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
-    </ItemGroup>
 
 </Project>

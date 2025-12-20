@@ -1,10 +1,17 @@
 <Solution>
+  <Folder Name="/scripts/">
+    <File Path="build.ps1" />
+    <File Path="global.json" />
+    <File Path="pack.ps1" />
+    <File Path="README.md" />
+    <File Path="README_cn.md" />
+    <File Path="webinfo.json" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/BuildSite/BuildSite.csproj" />
     <Project Path="src/ColorCode.Core/ColorCode.Core.csproj" />
     <Project Path="src/ColorCode.HTML/ColorCode.HTML.csproj" />
     <Project Path="src/Models/Models.csproj" />
-    <Project Path="src/NodePackage/NodePackage.csproj" />
     <Project Path="src/Share/Share.csproj" />
     <Project Path="WebApp/" Type="Website" DisplayName="WebApp">
       <BuildType Project="Debug" />
