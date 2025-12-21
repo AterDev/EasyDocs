@@ -7,7 +7,7 @@
     <meta name="description" content="@{Description}" />
     <base href="/" />
     <link rel="stylesheet" href="@{BaseUrl}css/app.css" />
-    <link rel="icon" type="image/png" href="@{BaseUrl}favicon.ico" />
+    <link rel="icon" type="image/png" href="@{BaseUrl}@{FaviconPath}" />
     <script>const baseUrl = '@{BaseUrl}';</script>
     <script src="@{BaseUrl}js/index.js"></script>
     <style>

@@ -1,5 +1,5 @@
-﻿using System.Text;
-using Share;
+﻿using Share;
+using System.Text;
 
 Console.OutputEncoding = Encoding.UTF8;
 Console.InputEncoding = Encoding.UTF8;
@@ -54,12 +54,21 @@ static void ShowHelp()
 static void ShowLogo()
 {
     var logo = """
-            EasyDocs : The Static Web Builder!
-               —→ for freedom 🗽 ←—
-
+            ███████╗ ███████╗ ██████╗   ██████╗  ██████╗
+            ██╔════╝ ╚══███╔╝ ██╔══██╗ ██╔═══██╗ ██╔═══╝
+            █████╗     ███╔╝  ██║  ██║ ██║   ██║ ██║  
+            ██╔══╝    ███╔╝   ██║  ██║ ██║   ██║ ██║  
+            ███████╗ ███████╗ ██████╔╝ ╚██████╔╝ ██████╗
+            ╚══════╝ ╚══════╝ ╚═════╝   ╚═════╝  ╚═════╝
+                    The Static Web Builder!
             """;
+    var sign = "         —→ for freedom 🗽 ←—";
 
+    Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine(logo);
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine(sign);
+    Console.ResetColor();
 }
 
 static void Debug()

@@ -1,10 +1,10 @@
-﻿using System.IO.Compression;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Models;
+using Markdig.Helpers;
 
 namespace Share.Builders;
+
 public partial class BaseBuilder
 {
     public WebInfo WebInfo { get; init; }
@@ -58,8 +58,7 @@ public partial class BaseBuilder
             foreach (Match match in matches)
             {
                 string headingText = match.Groups[1].Value;
-                string headingId = headingText.Trim().ToLower().Replace(" ", "-")
-                    .Replace("\uFE0F", "");
+                string headingId = NormalizeGitHub(headingText);
 
                 // 去除表情符号
                 headingId = Regex.Replace(headingId, @"[\uD800-\uDBFF][\uDC00-\uDFFF]", "");
@@ -102,11 +101,11 @@ public partial class BaseBuilder
     protected string GetExtensionScript(string content)
     {
         string extensionHead = "";
-        if (content.Contains("<div class=\"mermaid\">"))
+        if (content.Contains("class=\"mermaid\""))
         {
             extensionHead += "<script src=\"https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js\"></script>" + Environment.NewLine;
         }
-        if (content.Contains("<div class=\"math\">"))
+        if (content.Contains("class=\"math\""))
         {
             extensionHead += """
                 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -114,7 +113,7 @@ public partial class BaseBuilder
                 
                 """;
         }
-        if (content.Contains("<div class=\"nomnoml\">"))
+        if (content.Contains("class=\"nomnoml\""))
         {
             extensionHead += """
                 <script src="//unpkg.com/graphre/dist/graphre.js"></script>
@@ -303,7 +302,41 @@ public partial class BaseBuilder
         }
     }
 
-
     [GeneratedRegex(@"^# (.*)$", RegexOptions.Multiline)]
     private static partial Regex TitleRegex();
+
+    private static string NormalizeGitHub(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return text;
+
+        var builder = new StringBuilder(text.Length);
+        bool previousIsDash = false;
+        for (int i = 0; i < text.Length; i++)
+        {
+            char c = text[i];
+            if (c == ' ' || c == '\t' || c == '\n' || c == '\r')
+            {
+                if (!previousIsDash)
+                {
+                    builder.Append('-');
+                    previousIsDash = true;
+                }
+            }
+            else if (IsValidAnchorChar(c))
+            {
+                builder.Append(char.ToLowerInvariant(c));
+                previousIsDash = false;
+            }
+        }
+        // Remove trailing dash
+        if (builder.Length > 0 && builder[builder.Length - 1] == '-')
+            builder.Length--;
+        return builder.ToString();
+    }
+
+    private static bool IsValidAnchorChar(char c)
+    {
+        return char.IsLetterOrDigit(c) || c == '-' || c == '_' || c > 127;
+    }
 }

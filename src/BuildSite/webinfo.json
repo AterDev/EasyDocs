@@ -3,5 +3,6 @@
   "Description": "My Blog - Powered by EasyDocs",
   "AuthorName": "Ater",
   "BaseHref": "/EasyBlog/",
+  "Favicon": "favicon.ico", 
   "Domain": null
 }

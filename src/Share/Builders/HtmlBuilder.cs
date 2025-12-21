@@ -1,11 +1,12 @@
-﻿using System.Drawing;
+﻿using Markdig;
+using Markdig.Extensions.AutoIdentifiers;
+using Share.MarkdownExtension;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using Markdig;
-using Share.MarkdownExtension;
 
 namespace Share.Builders;
 
@@ -29,7 +30,6 @@ public class HtmlBuilder : BaseBuilder
 
     public void BuildWebSite()
     {
-        EnableBaseUrl();
         if (ExtractWebAssets())
         {
             BuildData();
@@ -37,6 +37,7 @@ public class HtmlBuilder : BaseBuilder
             BuildAboutMe();
             BuildIndexHtml();
             BuildBlogHtml();
+            CopyCustom();
         }
         else
         {
@@ -64,6 +65,27 @@ public class HtmlBuilder : BaseBuilder
         return true;
     }
 
+    public void CopyCustom()
+    {
+        var path = Path.Combine(ContentPath, "custom");
+        if (Directory.Exists(path))
+        {
+            var files = Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
+                .ToList();
+            foreach (var file in files)
+            {
+                string relativePath = file.Replace(path, Output);
+                string? dir = Path.GetDirectoryName(relativePath);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir!);
+                }
+                File.Copy(file, relativePath, true);
+            }
+            Command.LogSuccess("copy custom files!");
+        }
+    }
+
     /// <summary>
     ///  html file
     /// </summary>
@@ -84,7 +106,7 @@ public class HtmlBuilder : BaseBuilder
             .UseTaskLists()
             .UseDiagrams()
             .UseAutoLinks()
-            .UseAutoIdentifiers(Markdig.Extensions.AutoIdentifiers.AutoIdentifierOptions.GitHub)
+            .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
             .UsePipeTables()
             .UseBetterCodeBlock()
             .Build();
@@ -126,14 +148,13 @@ public class HtmlBuilder : BaseBuilder
                     }
 
                     File.WriteAllText(relativePath, tplContent, Encoding.UTF8);
-                    Command.LogSuccess($"generate html:{relativePath}");
                 }
                 catch (Exception e)
                 {
                     Command.LogError($"parse markdown error: {file}" + e.Message + e.StackTrace);
                 }
             }
-            Command.LogSuccess("generate html!");
+            Command.LogSuccess($"Generated [{files.Count}] html files!");
             string[] extensions = [".jpg", ".png", ".jpeg", ".gif", ".svg"];
             foreach (var file in otherFiles)
             {
@@ -175,6 +196,7 @@ public class HtmlBuilder : BaseBuilder
         tplContent = tplContent.Replace("@{Title}", title)
             .Replace("@{Description}", WebInfo.Description)
             .Replace("@{BaseUrl}", BaseUrl)
+            .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
             .Replace("@{Name}", WebInfo.Name)
             .Replace("@{ExtensionHead}", extensionHead)
             .Replace("@{toc}", toc)
@@ -215,8 +237,6 @@ public class HtmlBuilder : BaseBuilder
         var webInfoContent = JsonSerializer.Serialize(WebInfo, _jsonSerializerOptions);
         File.WriteAllText(Path.Combine(DataPath, Command.WebConfigFileName), webInfoContent, Encoding.UTF8);
 
-        // 获取git历史信息
-        ProcessHelper.RunCommand("git", "fetch --unshallow", out string _);
         BuildBlogs();
         BuildDocsData();
     }
@@ -268,7 +288,12 @@ public class HtmlBuilder : BaseBuilder
                 {
                     var versionPath = Path.Combine(languagePath, version);
                     var versionCatalog = new Catalog { Name = $"{docInfo.Name}", Path = versionPath };
+
+                    var sw = Stopwatch.StartNew();
                     TraverseDirectory(versionPath, versionCatalog);
+                    sw.Stop();
+                    Command.LogInfo($"Traverse {docInfo.Name}-{language}-{version} in {sw.ElapsedMilliseconds} ms");
+
                     string json = JsonSerializer.Serialize(versionCatalog, _jsonSerializerOptions);
                     string versionDataPath = Path.Combine(DataPath, docInfo.Name);
                     if (!Directory.Exists(versionDataPath))
@@ -337,6 +362,7 @@ public class HtmlBuilder : BaseBuilder
                 .Replace("@{Description}", WebInfo.Description)
                 .Replace("@{navigations}", navigations)
                 .Replace("@{blogs}", blogSb.ToString())
+                .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
                 .Replace("@{BaseUrl}", BaseUrl);
 
             File.WriteAllText(indexPath, indexHtml, Encoding.UTF8);
@@ -364,6 +390,7 @@ public class HtmlBuilder : BaseBuilder
                 .Replace("@{Description}", WebInfo.Description)
                 .Replace("@{navigations}", navigations)
                 .Replace("@{BaseUrl}", BaseUrl)
+                .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
                 .Replace("@{blogList}", blogHtml)
                 .Replace("@{siderbar}", siderBarHtml);
 

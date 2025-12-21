@@ -1,8 +1,7 @@
-﻿using System;
-using System.Runtime.ExceptionServices;
-using System.Text;
-using Markdig;
+﻿using Markdig;
+using Markdig.Extensions.AutoIdentifiers;
 using Share.MarkdownExtension;
+using System.Text;
 
 namespace Share.Builders;
 /// <summary>
@@ -100,16 +99,17 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                         var extensionScript = GetExtensionScript(docContent);
 
                         var htmlContent = tplContent.Replace("@{BaseUrl}", BaseUrl)
-                          .Replace("@{ExtensionHead}", extensionScript)
-                          .Replace("@{Title}", title)
-                          .Replace("@{LeftNav}", leftNav)
-                          .Replace("@{TOC}", toc)
-                          .Replace("@{DocContent}", docContent)
-                          .Replace("@{DocId}", ComputeMD5Hash(doc.HtmlPath))
-                          .Replace("@{DocName}", docInfo.Name)
-                          .Replace("@{Language}", language)
-                          .Replace("@{TopActions}", topActions)
-                          .Replace("@{Version}", version);
+                            .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
+                            .Replace("@{ExtensionHead}", extensionScript)
+                            .Replace("@{Title}", title)
+                            .Replace("@{LeftNav}", leftNav)
+                            .Replace("@{TOC}", toc)
+                            .Replace("@{DocContent}", docContent)
+                            .Replace("@{DocId}", ComputeMD5Hash(doc.HtmlPath))
+                            .Replace("@{DocName}", docInfo.Name)
+                            .Replace("@{Language}", language)
+                            .Replace("@{TopActions}", topActions)
+                            .Replace("@{Version}", version);
 
                         var outputFilePath = Path.Combine(outputDocPath, doc.HtmlPath);
 
@@ -172,8 +172,8 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         {
             genFile.Content = genFile.Content?.Replace("@{NavMenus}", navMenuTmp);
             File.WriteAllText(genFile.Path, genFile.Content);
-            Command.LogInfo($"Generate {genFile.Path}");
         }
+        Command.LogSuccess($"Generated [{genFiles.Count}] doc files!");
 
         // Generate static homepage files for each doc
         foreach (var homepage in docHomepages.Values)
@@ -227,7 +227,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             .UseTaskLists()
             .UseDiagrams()
             .UseAutoLinks()
-            .UseAutoIdentifiers(Markdig.Extensions.AutoIdentifiers.AutoIdentifierOptions.GitHub)
+            .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
             .UsePipeTables()
             .UseBetterCodeBlock()
             .Build();

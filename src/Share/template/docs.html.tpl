@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="@{BaseUrl}css/app.css" />
     <link rel="stylesheet" href="@{BaseUrl}css/docs.css" />
     <link rel="stylesheet" href="@{BaseUrl}css/markdown.css" />
-    <link rel="icon" type="image/png" href="@{BaseUrl}favicon.ico" />
+    <link rel="icon" type="image/png" href="@{BaseUrl}@{FaviconPath}" />
     <script>const baseUrl = '@{BaseUrl}';</script>
     <script src="@{BaseUrl}js/docs.js"></script>
     <script src="@{BaseUrl}js/markdown.js"></script>

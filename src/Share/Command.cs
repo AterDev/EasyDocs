@@ -1,7 +1,7 @@
-﻿using System.Text;
-using Share.Builders;
+﻿using Share.Builders;
 
 namespace Share;
+
 public class Command
 {
     public static string WebConfigFileName = "webinfo.json";
@@ -73,7 +73,8 @@ public class Command
 
     public static void LogInfo(string msg)
     {
-        Console.WriteLine($"ℹ️ {msg}");
+        var now = DateTime.Now.ToString("HH:mm:ss");
+        Console.WriteLine($"ℹ️ [{now}] {msg}");
     }
 
     public static void LogWarning(string msg)
@@ -91,8 +92,9 @@ public class Command
     }
     public static void LogSuccess(string msg)
     {
+        var now = DateTime.Now.ToString("HH:mm:ss");
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"✅ {msg}");
+        Console.WriteLine($"✅ [{now}] {msg}");
         Console.ResetColor();
     }
 }

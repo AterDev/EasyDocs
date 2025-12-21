@@ -6,7 +6,7 @@
     <meta name="description" content="@{Title}" />
     <link rel="stylesheet" href="@{BaseUrl}css/app.css">
     <link rel="stylesheet" href="@{BaseUrl}css/markdown.css">
-    <link rel="icon" type="image/png" href="@{BaseUrl}favicon.ico" />
+    <link rel="icon" type="image/png" href="@{BaseUrl}@{FaviconPath}" />
     <script src="@{BaseUrl}js/markdown.js"></script>
     <title>@{Title}-@{Name}</title>
     @{ExtensionHead}
