@@ -48,6 +48,16 @@ public class WebInfo
     /// </summary>
     public string? Domain { get; set; }
 
+    /// <summary>
+    /// 仓库地址，用于生成编辑链接
+    /// </summary>
+    public string? RepositoryUrl { get; set; }
+
+    /// <summary>
+    /// 分支名称，默认为 main
+    /// </summary>
+    public string Branch { get; set; } = "main";
+
     public List<DocInfo> DocInfos { get; set; } = [];
 }
 /// <summary>

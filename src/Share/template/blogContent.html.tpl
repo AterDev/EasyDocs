@@ -11,7 +11,7 @@
     <title>@{Title}-@{Name}</title>
     @{ExtensionHead}
 </head>
-<body class="px-4 sm:px-6 lg:px-8 dark:bg-neutral-900 pb-4">
+<body class="dark:bg-neutral-900 pb-4">
     <div class="container mx-auto flex mt-2" style="margin-bottom: 48px;">
         <div class="w-1/4 max-sm:hidden sm:block text-right pr-4 mt-3">
         @{side}

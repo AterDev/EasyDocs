@@ -40,7 +40,12 @@
         @{LeftNav}
         </div>
         <div class="col-span-1 md:col-span-2 lg:col-span-2 markdown-content">
-        @{DocContent}
+            <div class="flex justify-between items-center ">
+                <div>📆 2025-12-22 11:30</div>
+                <div><a href="@{GithubLink}" target="_blank" rel="noopener noreferrer" title="Edit">🖋️</a></div>
+             </div>
+        <div>
+        @{DocContent}</div>
         </div>
         <div class="max-lg:hidden lg:block lg:col-span-1">
         @{TOC}

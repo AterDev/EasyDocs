@@ -1,7 +1,7 @@
-﻿using System.Security.Cryptography;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Markdig.Helpers;
 
 namespace Share.Builders;
 
@@ -16,6 +16,9 @@ public partial class BaseBuilder
     public string BaseUrl { get; set; }
 
     public static Dictionary<string, string> DocMenus { get; set; } = [];
+    private static readonly Dictionary<string, (DateTimeOffset? Created, DateTimeOffset? Updated)> GitTimeCache = new(StringComparer.OrdinalIgnoreCase);
+    private static bool _isGitLoaded = false;
+    private static readonly object _gitLoadLock = new();
 
     public BaseBuilder(WebInfo webInfo)
     {
@@ -130,6 +133,9 @@ public partial class BaseBuilder
     /// <param name="parentCatalog"></param>
     protected void TraverseDirectory(string directoryPath, Catalog parentCatalog)
     {
+        // 确保 Git 历史已加载
+        LoadGitHistory(directoryPath);
+
         // 排序数据
         var orderFile = Path.Combine(directoryPath, ".order");
         string[] orderData = [];
@@ -260,8 +266,113 @@ public partial class BaseBuilder
         return navigations.ToString();
     }
 
+    private static void LoadGitHistory(string directoryPath)
+    {
+        if (_isGitLoaded) return;
+        lock (_gitLoadLock)
+        {
+            if (_isGitLoaded) return;
+
+            try
+            {
+                // 获取 Git 根目录
+                if (!ProcessHelper.RunCommand("git", "rev-parse --show-toplevel", out string gitRoot))
+                {
+                    _isGitLoaded = true; // Git 不可用，跳过
+                    return;
+                }
+                gitRoot = gitRoot.Trim().Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+
+                var process = new Process();
+                process.StartInfo.FileName = "git";
+                // 获取所有提交日志，格式：COMMIT_DATE:ISO8601
+                // 紧接着是文件状态和路径
+                // 增加 -c core.quotepath=false 防止中文路径被转义
+                process.StartInfo.Arguments = "-c core.quotepath=false log --name-status --date=iso-strict --format=\"COMMIT_DATE:%ad\"";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.WorkingDirectory = gitRoot; // 在 Git 根目录运行
+                process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+
+                process.Start();
+
+                string? line;
+                DateTimeOffset currentCommitDate = DateTimeOffset.MinValue;
+
+                while ((line = process.StandardOutput.ReadLine()) != null)
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    if (line.StartsWith("COMMIT_DATE:"))
+                    {
+                        if (DateTimeOffset.TryParse(line.Substring(12), out var date))
+                        {
+                            currentCommitDate = date;
+                        }
+                        continue;
+                    }
+
+                    // 解析状态和路径
+                    // 格式: M    path/to/file
+                    // 格式: A    path/to/file
+                    // 格式: R100 old/path new/path
+                    var parts = line.Split('\t');
+                    if (parts.Length >= 2)
+                    {
+                        var status = parts[0][0];
+                        var filePath = parts.Last(); // 对于重命名，取新路径
+
+                        // 转换为本地路径
+                        var fullPath = Path.GetFullPath(Path.Combine(gitRoot, filePath.Replace('/', Path.DirectorySeparatorChar)));
+
+                        if (!GitTimeCache.TryGetValue(fullPath, out var info))
+                        {
+                            // 第一次遇到文件（从新到旧），这是最后修改时间
+                            info.Updated = currentCommitDate;
+                            GitTimeCache[fullPath] = info;
+                        }
+
+                        // 如果是添加操作，更新创建时间（从新到旧扫描，越旧的 A 越接近真实创建时间）
+                        if (status == 'A')
+                        {
+                            var currentInfo = GitTimeCache[fullPath];
+                            // 只有当 Created 为空时才设置，或者我们总是取最新的 'A'？
+                            // git log --diff-filter=A 返回的是包含 A 的 commit。
+                            // 如果文件被删除重加，最新的 A 是最近一次添加。
+                            // 我们希望 CreatedTime 是最近一次添加的时间。
+                            // 因为我们是从新到旧扫描，遇到的第一个 A 就是最近的 A。
+                            if (!currentInfo.Created.HasValue)
+                            {
+                                currentInfo.Created = currentCommitDate;
+                                GitTimeCache[fullPath] = currentInfo;
+                            }
+                        }
+                    }
+                }
+                process.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Warning] LoadGitHistory failed: {ex.Message}");
+            }
+            finally
+            {
+                _isGitLoaded = true;
+            }
+        }
+    }
+
     private static DateTimeOffset? GetCreatedTime(string path)
     {
+        var fullPath = Path.GetFullPath(path);
+        if (GitTimeCache.TryGetValue(fullPath, out var info) && info.Created.HasValue)
+        {
+            return info.Created;
+        }
+
+        if (_isGitLoaded) return null;
+
         if (ProcessHelper.RunCommand("git", @$"log --diff-filter=A --format=%aI -- ""{path}""", out string output))
         {
             output = output.Split("\n").First();
@@ -272,6 +383,14 @@ public partial class BaseBuilder
 
     private static DateTimeOffset? GetUpdatedTime(string path)
     {
+        var fullPath = Path.GetFullPath(path);
+        if (GitTimeCache.TryGetValue(fullPath, out var info) && info.Updated.HasValue)
+        {
+            return info.Updated;
+        }
+
+        if (_isGitLoaded) return null;
+
         return ProcessHelper.RunCommand("git", @$"log -n 1 --format=%aI -- ""{path}""", out string output)
             ? ConvertToDateTimeOffset(output)
             : null;
@@ -337,6 +456,6 @@ public partial class BaseBuilder
 
     private static bool IsValidAnchorChar(char c)
     {
-        return char.IsLetterOrDigit(c) || c == '-' || c == '_' || c > 127;
+        return char.IsLetterOrDigit(c) || c == '-' || c == '_';
     }
 }

@@ -10,6 +10,9 @@ namespace Share.Builders;
 public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
 {
     public List<DocInfo> DocInfos { get; set; } = webInfo.DocInfos;
+    private string? _gitRoot;
+    private string? _repoUrl;
+    private string? _branch;
 
     /// <summary>
     /// 构建文档
@@ -21,6 +24,8 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         {
             return;
         }
+        InitGitInfo();
+
         var docRootPath = Path.Combine(ContentPath, "docs");
         var outputDocPath = Path.Combine(Output, "docs");
 
@@ -97,6 +102,8 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                         var title = GetTitleFromMarkdown(markdown);
                         var toc = GetContentTOC(markdown) ?? "";
                         var extensionScript = GetExtensionScript(docContent);
+                        var updateTimeStr = (doc.UpdatedTime ?? doc.CreatedTime).ToString("yyyy-MM-dd HH:mm");
+                        var githubLink = GetGithubLink(doc.Path);
 
                         var htmlContent = tplContent.Replace("@{BaseUrl}", BaseUrl)
                             .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
@@ -109,7 +116,9 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                             .Replace("@{DocName}", docInfo.Name)
                             .Replace("@{Language}", language)
                             .Replace("@{TopActions}", topActions)
-                            .Replace("@{Version}", version);
+                            .Replace("@{Version}", version)
+                            .Replace("@{UpdateTime}", updateTimeStr)
+                            .Replace("@{GithubLink}", githubLink);
 
                         var outputFilePath = Path.Combine(outputDocPath, doc.HtmlPath);
 
@@ -182,6 +191,66 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             File.WriteAllText(homepage.Path, homepage.Content);
             Command.LogSuccess($"Generate doc homepage: {homepage.Path}");
         }
+    }
+
+    private void InitGitInfo()
+    {
+        // 优先使用配置
+        _repoUrl = WebInfo.RepositoryUrl;
+        _branch = WebInfo.Branch;
+
+        // 获取 Git 根目录
+        if (ProcessHelper.RunCommand("git", "rev-parse --show-toplevel", out string gitRoot))
+        {
+            _gitRoot = gitRoot.Trim().Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+        }
+
+        // 如果未配置 RepoUrl，尝试自动检测
+        if (string.IsNullOrEmpty(_repoUrl))
+        {
+            if (ProcessHelper.RunCommand("git", "remote get-url origin", out string remoteUrl))
+            {
+                remoteUrl = remoteUrl.Trim();
+                // 处理 SSH 格式 git@github.com:User/Repo.git -> https://github.com/User/Repo
+                if (remoteUrl.StartsWith("git@"))
+                {
+                    remoteUrl = remoteUrl.Replace(":", "/").Replace("git@", "https://");
+                }
+                if (remoteUrl.EndsWith(".git"))
+                {
+                    remoteUrl = remoteUrl[..^4];
+                }
+                _repoUrl = remoteUrl;
+            }
+        }
+
+        // 如果未配置 Branch，尝试自动检测
+        if (string.IsNullOrEmpty(_branch))
+        {
+            if (ProcessHelper.RunCommand("git", "branch --show-current", out string branch))
+            {
+                _branch = branch.Trim();
+            }
+        }
+    }
+
+    private string GetGithubLink(string filePath)
+    {
+        if (string.IsNullOrEmpty(_repoUrl) || string.IsNullOrEmpty(_gitRoot))
+        {
+            return "";
+        }
+
+        var fullPath = Path.GetFullPath(filePath);
+        if (!fullPath.StartsWith(_gitRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            return "";
+        }
+
+        var relativePath = Path.GetRelativePath(_gitRoot, fullPath).Replace('\\', '/');
+        var branch = string.IsNullOrEmpty(_branch) ? "main" : _branch;
+
+        return $"{_repoUrl}/blob/{branch}/{relativePath}";
     }
 
     public string BuildTopActions(DocInfo docInfo)
@@ -328,20 +397,6 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             }
         }
 
-        //if (orderData.Length > 0)
-        //{
-        //    var orderedItems = new List<TreeNodeItem>();
-        //    foreach (var order in orderData)
-        //    {
-        //        var item = nodeItems.FirstOrDefault(i => Path.GetFileNameWithoutExtension(i.DisplayName) == order);
-        //        if (item != null)
-        //        {
-        //            orderedItems.Add(item);
-        //        }
-        //    }
-        //    nodeItems = orderedItems;
-        //}
-
         foreach (var item in nodeItems)
         {
             if (string.IsNullOrEmpty(item.Href))
@@ -349,8 +404,9 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                 sb.AppendLine(@$"<li><span class=""caret"">{item.DisplayName}</span>");
                 sb.AppendLine(@"<ul class=""nested"">");
 
-                var child = catalog.Children.FirstOrDefault(c => c.Name == item.DisplayName);
-                GenerateCatalogHtml(child, sb);
+                var child = catalog.Children?.FirstOrDefault(c => c.Name == item.DisplayName);
+                if (child != null)
+                    GenerateCatalogHtml(child, sb);
                 sb.AppendLine("</ul>");
 
             }
