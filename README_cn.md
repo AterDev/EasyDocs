@@ -32,19 +32,7 @@
 
 ## 🚀安装工具
 
-本工具发布在`npm`和`nuget`上，你可以非常方便的通常以下命令安装。
-
-### NPM包
-
-```pwsh
-npm i -g  ater.easydocs
-```
-
-or
-
-```powershell
-pnpm i -g  ater.easydocs
-```
+本工具发布在`nuget`上，你可以非常方便的通常以下命令安装。
 
 ### Nuget包
 
@@ -53,9 +41,6 @@ dotnet tool install -g Ater.EasyDocs
 ```
 
 安装完成后，你可以使用`ezdoc`命令来操作。
-
-> [!NOTE]
-> 若要使用预览版，需要在安装时添加预览版标识，具体查看对应的命令。
 
 ## 🛠️使用工具
 
@@ -150,4 +135,4 @@ ezdoc build .\Content .\WebApp
 
 🎉 `WebApp`目录下就是静态网站需要的一切，你可以将它自由的部署到你需要的地方。
 
-更多内容查看[官方文档](https://aterdev.github.io/EasyBlog/).
+更多内容查看[官方文档](https://github.com/AterDev/EasyDocs).
