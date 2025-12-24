@@ -41,7 +41,7 @@
         </div>
         <div class="col-span-1 md:col-span-2 lg:col-span-2 markdown-content">
             <div class="flex justify-between items-center ">
-                <div>📆 2025-12-22 11:30</div>
+                <div>📆 @{UpdateTime}</div>
                 <div><a href="@{GithubLink}" target="_blank" rel="noopener noreferrer" title="Edit">🖋️</a></div>
              </div>
         <div>
