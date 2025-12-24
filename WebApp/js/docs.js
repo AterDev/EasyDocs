@@ -66,6 +66,43 @@ class Docs {
         this.classList.toggle("caret-down");
       });
     }
+
+    // Mobile navigation drawer
+    this.initMobileNav();
+  }
+
+  initMobileNav() {
+    const listNav = document.getElementById('listNav');
+    const mobileNav = document.getElementById('mobileNav');
+    const navOverlay = document.getElementById('navOverlay');
+    const closeNav = document.getElementById('closeNav');
+
+    if (!listNav || !mobileNav || !navOverlay || !closeNav) {
+      return;
+    }
+
+    const openNav = () => {
+      mobileNav.classList.add('open');
+      navOverlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeNavDrawer = () => {
+      mobileNav.classList.remove('open');
+      navOverlay.classList.remove('show');
+      document.body.style.overflow = '';
+    };
+
+    listNav.addEventListener('click', openNav);
+    closeNav.addEventListener('click', closeNavDrawer);
+    navOverlay.addEventListener('click', closeNavDrawer);
+
+    // Close drawer when navigating to a doc link
+    mobileNav.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A') {
+        closeNavDrawer();
+      }
+    });
   }
 
   async selectLanguage(language) {

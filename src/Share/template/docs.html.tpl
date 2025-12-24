@@ -32,27 +32,47 @@
 
     <div class="container mx-auto" style="margin-bottom: 48px;">
       <div id="docData" data-id="@{DocId}" class="hidden" data-docName="@{DocName}" data-language="@{Language}" data-version="@{Version}"></div>
+      
+      <!-- Mobile Navigation Drawer Overlay -->
+      <div id="navOverlay" class="nav-overlay"></div>
+      
+      <!-- Mobile Navigation Drawer -->
+      <div id="mobileNav" class="mobile-nav-drawer">
+        <div class="mobile-nav-header">
+          <button id="closeNav" class="close-nav-btn">✕</button>
+        </div>
+        <div class="mobile-nav-content">
+          @{LeftNav}
+        </div>
+      </div>
+      
       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-2 pt-2">
         <div class="max-md:hidden md:block lg:col-span-1 sticky pe-4 top-0 h-fit">
-        <div>
-          <strong>Version</strong>
+            <div>
+              <strong>Version</strong>
+            </div>
+            @{LeftNav}
         </div>
-        @{LeftNav}
-        </div>
-        <div class="col-span-1 md:col-span-2 lg:col-span-2 markdown-content">
-            <div class="flex justify-between items-center ">
-                <div>📆 @{UpdateTime}</div>
-                <div><a href="@{GithubLink}" target="_blank" rel="noopener noreferrer" title="Edit">🖋️</a></div>
+        <div class="col-span-1 md:col-span-2 lg:col-span-2 markdown-content px-3">
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-neutral-200">📆 @{UpdateTime}</div>
+                <div class="flex gap-3 items-center">
+                    <button id="listNav" class="nav-toggle-btn" title="Navigation" aria-label="Open navigation menu">
+                        <span class="text-xl">📑</span>
+                    </button>
+                    <a href="@{GithubLink}" target="_blank" rel="noopener noreferrer" class="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors" title="Edit on GitHub">
+                        <span class="text-xl">🖋️</span>
+                    </a>
+                </div>
              </div>
-        <div>
-        @{DocContent}</div>
+            <div>@{DocContent}</div>
         </div>
         <div class="max-lg:hidden lg:block lg:col-span-1">
-        @{TOC}
+            @{TOC}
         </div>
       </div>
     </div>
-    <div class="footer py-2 bottom-0 w-full fixed">
+    <div class="footer py-2 bottom-0 w-full fixed z-10">
     <div class="container mx-auto text-center">
         <p class="text-neutral-600 dark:text-neutral-300 mb-0">
         @{Name}

@@ -318,7 +318,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         // version select
 
         sb.AppendLine("""
-            <select id="versionSelect" class="border border-gray-300 rounded-md p-1 my-2 bg-block w-full">
+            <select id="versionSelect" class="border border-gray-300 dark:border-neutral-700 rounded-md p-2 my-2 w-full bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
             """);
         foreach (var version in versions)

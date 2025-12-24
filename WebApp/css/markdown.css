@@ -144,14 +144,23 @@ li {
     }
 }
 
-table {
+/* Table wrapper for horizontal scroll */
+.markdown-content table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    margin: 8px 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.markdown-content table > * {
+    display: table;
     width: 100%;
     white-space: nowrap;
-    margin: 8px 0;
 }
 
 @media (prefers-color-scheme: dark) {
-    table {
+    .markdown-content table {
         --tw-bg-opacity: 1;
         background-color: rgb(31 41 55 / var(--tw-bg-opacity));
     }

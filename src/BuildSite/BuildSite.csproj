@@ -8,7 +8,7 @@
 		<ToolCommandName>ezdoc</ToolCommandName>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<PackageId>Ater.EasyDocs</PackageId>
-		<Version>2.1.1</Version>
+		<Version>2.1.2</Version>
 		<Description>Fast and lightweight static website generation tool!</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -19,7 +19,8 @@
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/AterDev/easyblog.git</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes>Fix updateTime in doc</PackageReleaseNotes>
+		<PackageReleaseNotes>1. Add category when using mobile.
+2. fix some style issue</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>

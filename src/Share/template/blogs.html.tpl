@@ -53,7 +53,7 @@
     </div>
     </div>
 
-  <div class="footer py-2 bottom-0 w-full fixed">
+  <div class="footer py-2 bottom-0 w-full fixed z-10">
     <div class="container mx-auto text-center">
         <p class="text-neutral-600 dark:text-neutral-300 mb-0">
         @{Name}

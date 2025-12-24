@@ -16,7 +16,7 @@
         <div class="w-1/4 max-sm:hidden sm:block text-right pr-4 mt-3">
         @{side}
         </div>
-        <div class="sm:w-3/4 sm:pr-4 w-full markdown-content">
+        <div class="sm:w-3/4 sm:pr-4 w-full markdown-content px-3">
         @{content}
         </div>
         <div class="w-1/4 mt-1 max-sm:hidden sm:flex">
