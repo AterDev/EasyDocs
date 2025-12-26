@@ -1,12 +1,12 @@
-﻿using Markdig;
-using Markdig.Extensions.AutoIdentifiers;
-using Share.MarkdownExtension;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using Markdig;
+using Markdig.Extensions.AutoIdentifiers;
+using Share.MarkdownExtension;
 
 namespace Share.Builders;
 
@@ -171,7 +171,7 @@ public class HtmlBuilder : BaseBuilder
 
                 File.Copy(file, relativePath, true);
             }
-            Command.LogSuccess("copy other files!");
+            Command.LogSuccess($"copy [{otherFiles.Count}] other files!");
         }
     }
 
@@ -339,13 +339,13 @@ public class HtmlBuilder : BaseBuilder
             {
                 blogSb.AppendLine("""
                     <div class="text-lg my-2 font-medium">
-                      最新博客
+                      New Blogs
                     </div>
                     <div class="mt-2 flex gap-4 flex-wrap">
                     """);
                 foreach (var blog in latestBlogs)
                 {
-                    var date = blog.UpdatedTime.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
+                    var date = blog.UpdatedTime?.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
                     blogSb.AppendLine($"""
                     <div class="blog-card">
                       <a class="title" href="{BuildBlogPath(blog.HtmlPath)}" target="_blank">
@@ -358,10 +358,39 @@ public class HtmlBuilder : BaseBuilder
                 blogSb.Append("</div>");
             }
 
+            // 生成文档列表
+            var docSb = new StringBuilder();
+            if (DocMenus.Count > 0)
+            {
+                docSb.AppendLine("""
+                <div class="text-lg my-2 font-medium mt-4">
+                  Product Docs
+                </div>
+                <div class="mt-2 flex gap-4 flex-wrap">
+                """);
+
+                foreach (var doc in DocMenus)
+                {
+                    var docInfo = WebInfo.DocInfos.FirstOrDefault(d => d.Name == doc.Key);
+                    var logo = docInfo?.Logo ?? "/default_logo.png";
+                    docSb.AppendLine($"""
+                        <a href="{BaseUrl}docs/{doc.Key}.html" target="_blank">
+                            <div class="blog-card">
+                                <img src="{BaseUrl}docs/{doc.Key}/{logo}" style="max-height:200px;place-self: center;"/>
+                                <p class="title">{docInfo?.Name} Docs</p>
+                                <p class="sub-title">{docInfo?.Description ?? string.Empty}</p>
+                            </div>
+                        </a>
+                        """);
+                }
+                docSb.Append("</div>");
+            }
+
             indexHtml = indexHtml.Replace("@{Name}", WebInfo.Name)
                 .Replace("@{Description}", WebInfo.Description)
                 .Replace("@{navigations}", navigations)
                 .Replace("@{blogs}", blogSb.ToString())
+                .Replace("@{docs}", docSb.ToString())
                 .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
                 .Replace("@{BaseUrl}", BaseUrl);
 

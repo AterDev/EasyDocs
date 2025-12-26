@@ -67,6 +67,9 @@ public class DocInfo
 {
     public required string Name { get; set; }
 
+    public string Logo { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+
     /// <summary>
     /// 包含的语言
     /// </summary>

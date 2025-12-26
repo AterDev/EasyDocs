@@ -1,7 +1,7 @@
-﻿using Markdig;
+﻿using System.Text;
+using Markdig;
 using Markdig.Extensions.AutoIdentifiers;
 using Share.MarkdownExtension;
-using System.Text;
 
 namespace Share.Builders;
 /// <summary>
@@ -152,7 +152,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                     }
 
                     // 其他资源文件
-                    List<string> otherFiles = Directory.EnumerateFiles(versionPath, "*", SearchOption.AllDirectories)
+                    List<string> otherFiles = Directory.EnumerateFiles(docPath, "*", SearchOption.AllDirectories)
                         .Where(f => !f.EndsWith(".md"))
                         .ToList();
                     string[] extensions = [".jpg", ".png", ".jpeg", ".gif", ".svg"];
@@ -171,7 +171,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
 
                         File.Copy(file, relativePath, true);
                     }
-                    Command.LogSuccess("Copied other files!");
+                    Command.LogSuccess($"Copied [{otherFiles.Count}] other files!");
                 }
             }
         }

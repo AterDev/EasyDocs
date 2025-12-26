@@ -849,9 +849,9 @@ body {
     margin-top: calc(var(--spacing) * 2);
     font-size: var(--text-sm);
     line-height: var(--tw-leading, var(--text-sm--line-height));
-    color: var(--color-neutral-900);
+    color: var(--color-neutral-800);
     @media (prefers-color-scheme: dark) {
-      color: var(--color-neutral-100);
+      color: var(--color-neutral-300);
     }
   }
 }

@@ -32,6 +32,8 @@
 
     <div class="container mx-auto">
     @{blogs}
+
+    @{docs}
     </div>
 
     <div class="py-4 fixed bottom-0 w-full bg-block">
