@@ -138,6 +138,8 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                         if (isFirstDoc && !docHomepages.ContainsKey(docInfo.Name))
                         {
                             var homepagePath = Path.Combine(outputDocPath, $"{docInfo.Name}.html");
+
+                            htmlContent = htmlContent.Replace("src=\"./_images", $"src=\"./{docInfo.Name}/{language}/{version}/_images");
                             docHomepages[docInfo.Name] = new GenFile
                             {
                                 Name = $"{docInfo.Name}.html",
