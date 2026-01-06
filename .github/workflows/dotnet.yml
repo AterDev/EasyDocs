@@ -1,0 +1,40 @@
+name: Build and Publish to NuGet
+
+on:
+  push:
+    branches:
+      - nuget
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: PowerShell script
+        # You may pin to the exact commit or the version.
+        # uses: Amadevus/pwsh-script@97a8b211a5922816aa8a69ced41fa32f23477186
+        uses: Amadevus/pwsh-script@v2.0.3
+        with:
+          # PowerShell script to execute in Actions-hydrated context
+          script: ./pack.ps1
+
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish to NuGet
+        run: dotnet nuget push ./nuget/*.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
