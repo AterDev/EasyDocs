@@ -23,9 +23,8 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: PowerShell script
-        uses: Amadevus/pwsh-script@v2.0.3
-        with:
-          script: ./pack.ps1
+        shell: pwsh
+        run: ./pack.ps1
 
       - name: NuGet login (OIDC → temp API key)
         uses: NuGet/login@v1

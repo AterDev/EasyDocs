@@ -15,9 +15,9 @@
 		<Copyright>Atersoft</Copyright>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/AterDev/easyblog</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/AterDev/EasyDocs</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
-		<RepositoryUrl>https://github.com/AterDev/easyblog.git</RepositoryUrl>
+		<RepositoryUrl>https://github.com/AterDev/EasyDocs</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageReleaseNotes>1. fix doc tree navigation location</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -34,11 +34,11 @@
 		<ProjectReference Include="..\Share\Share.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="logo.jpg">
+	  <None Include="..\..\README.md">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
-	  <None Include="README.md">
+	  <None Include="logo.jpg">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
