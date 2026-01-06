@@ -1,4 +1,7 @@
-# EasyDoc
+# EasyDocs
+
+![NuGet Version](https://img.shields.io/nuget/v/Ater.EasyDocs)
+
 
 🌐 [Englisth](./README.md)   🌐[中文](./README-cn.md)
 
