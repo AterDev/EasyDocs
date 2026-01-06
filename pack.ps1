@@ -27,6 +27,9 @@ try {
         $destName = $filePath.Replace('WebApp/', '')
         $tempFilePath = Join-Path $tempDir $destName
         $sourceFilePath = Join-Path $location $filePath
+        # Ensure the destination directory exists
+        $destDir = Split-Path $tempFilePath -Parent
+        New-Item -ItemType Directory -Path $destDir -Force | Out-Null
         Copy-Item -Path $sourceFilePath -Destination $tempFilePath -Force
     }
     
