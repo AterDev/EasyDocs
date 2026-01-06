@@ -6,7 +6,6 @@ param (
 )
 
 $location = Get-Location
-
 Write-Host 'Compressing files...'
 
 $filePahts = @('WebApp/css/app.css', 'WebApp/css/docs.css', 'WebApp/css/markdown.css', 'WebApp/css/keyboard_arrow_right.svg',

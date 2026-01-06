@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/scripts/">
+    <File Path=".github/workflows/build.yml" />
     <File Path="build.ps1" />
     <File Path="global.json" />
     <File Path="pack.ps1" />
