@@ -8,7 +8,7 @@ param (
 $location = Get-Location
 Write-Host 'Compressing files...'
 
-$filePahts = @('WebApp/css/app.css', 'WebApp/css/docs.css', 'WebApp/css/markdown.css', 'WebApp/css/keyboard_arrow_right.svg',
+$filePaths = @('WebApp/css/app.css', 'WebApp/css/docs.css', 'WebApp/css/markdown.css', 'WebApp/css/keyboard_arrow_right.svg',
     'WebApp/js/blogs.js', 'WebApp/js/docs.js', 'WebApp/js/index.js', 'WebApp/js/markdown.js',
     'WebApp/favicon.ico'
 )
@@ -20,18 +20,29 @@ if (Test-Path $zipFilePath) {
     Remove-Item $zipFilePath
 }
 
-$zip = [System.IO.Compression.ZipFile]::Open($zipFilePath, [System.IO.Compression.ZipArchiveMode]::Create)
-foreach ($filePath in $filePahts) {
-    $destName = $filePath.Replace('WebApp/', '');
-    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $(Join-Path $location $filePath), $destName)
+# Create a temporary directory to hold files with adjusted paths
+$tempDir = New-Item -ItemType Directory -Path (Join-Path $location 'temp_zip') -Force
+try {
+    foreach ($filePath in $filePaths) {
+        $destName = $filePath.Replace('WebApp/', '')
+        $tempFilePath = Join-Path $tempDir $destName
+        $sourceFilePath = Join-Path $location $filePath
+        Copy-Item -Path $sourceFilePath -Destination $tempFilePath -Force
+    }
+    
+    # Compress the temporary directory contents into the zip file
+    Compress-Archive -Path "$tempDir/*" -DestinationPath $zipFilePath -Force
+}
+finally {
+    # Clean up temporary directory
+    Remove-Item -Path $tempDir -Recurse -Force
 }
 
-$zip.Dispose()
-Write-host 'Compressing files done.'
+Write-Host 'Compressing files done.'
 
 Write-Host 'Packing new version...'
-dotnet build  ./src/BuildSite -c release 
-dotnet pack  ./src/BuildSite -c release --no-build -o ./nupkg
+dotnet build ./src/BuildSite -c release 
+dotnet pack ./src/BuildSite -c release --no-build -o ./nupkg
 
 if ($install) {
     # get package name and version
