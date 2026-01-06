@@ -32,7 +32,7 @@ Write-host 'Compressing files done.'
 
 Write-Host 'Packing new version...'
 dotnet build  ./src/BuildSite -c release 
-dotnet pack  ./src/BuildSite -c release 
+dotnet pack  ./src/BuildSite -c release --no-build -o ./nupkg
 
 if ($install) {
     # get package name and version
