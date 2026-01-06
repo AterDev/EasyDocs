@@ -410,12 +410,12 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                 if (child != null)
                     GenerateCatalogHtml(child, sb);
                 sb.AppendLine("</ul>");
-
+                sb.AppendLine("</li>");
             }
             else
             {
                 sb.AppendLine($"""
-                    <li id="{item.Id}" class="space">
+                    <li data-doc-id="{item.Id}" class="space">
                         <a class="text" href="/docs/{item.Href}">{item.DisplayName}</a>
                     </li>
                     """);
