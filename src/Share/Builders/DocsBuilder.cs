@@ -415,7 +415,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             else
             {
                 sb.AppendLine($"""
-                    <li id="{item.Id}" class="space">
+                    <li data-doc-id="{item.Id}" class="space">
                         <a class="text" href="/docs/{item.Href}">{item.DisplayName}</a>
                     </li>
                     """);

@@ -19,7 +19,7 @@ class Docs {
     }
 
     // Find all elements with the docId (both mobile and desktop navigation)
-    const docLis = document.querySelectorAll(`#${CSS.escape(this.docId)}`);
+    const docLis = document.querySelectorAll(`[data-doc-id="${this.docId}"]`);
     docLis.forEach(docLi => {
       docLi.classList.add('active');
       let parent = docLi.parentElement;
