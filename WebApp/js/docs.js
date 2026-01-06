@@ -18,8 +18,9 @@ class Docs {
       this.docId = docData.getAttribute('data-id');
     }
 
-    const docLi = document.getElementById(this.docId);
-    if (docLi) {
+    // Find all elements with the docId (both mobile and desktop navigation)
+    const docLis = document.querySelectorAll(`#${CSS.escape(this.docId)}`);
+    docLis.forEach(docLi => {
       docLi.classList.add('active');
       let parent = docLi.parentElement;
 
@@ -39,7 +40,7 @@ class Docs {
         }
         parent = parent.parentElement;
       }
-    }
+    });
 
     // set selected value for version select
     const versionSelect = document.getElementById('versionSelect');

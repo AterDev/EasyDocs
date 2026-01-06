@@ -410,7 +410,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                 if (child != null)
                     GenerateCatalogHtml(child, sb);
                 sb.AppendLine("</ul>");
-
+                sb.AppendLine("</li>");
             }
             else
             {

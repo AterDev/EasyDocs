@@ -54,6 +54,15 @@ ul.nested > li.space {
     transform-origin: center;
 }
 
+/* Active/selected menu item styling */
+.tree li.active > .text,
+.tree li.active > a.text {
+    color: #3b82f6;
+    font-weight: 600;
+    background-color: rgba(59, 130, 246, 0.1);
+    border-radius: 0.25rem;
+}
+
 /* Navigation toggle button - only visible on mobile */
 .nav-toggle-btn {
     display: inline-flex;
