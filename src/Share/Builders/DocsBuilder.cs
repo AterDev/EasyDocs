@@ -301,6 +301,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
             .UsePipeTables()
             .UseBetterCodeBlock()
+            .UseLinkConvert()
             .Build();
 
         string markdown = File.ReadAllText(doc.Path);

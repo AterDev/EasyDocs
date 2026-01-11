@@ -8,4 +8,9 @@ public static class MarkdownPipelineExtension
         pipeline.Extensions.Add(new CodeBlockExtension());
         return pipeline;
     }
+    public static MarkdownPipelineBuilder UseLinkConvert(this MarkdownPipelineBuilder pipeline)
+    {
+        pipeline.Extensions.Add(new LinkConvertExtension());
+        return pipeline;
+    }
 }
