@@ -57,7 +57,7 @@ public class Markdown : ILanguage
 
                            // code block
                            new LanguageRule(
-                               @"^([ ]{4}(?![ ])(?:.|\r?\n[ ]{4})*)|^(```+[ \t]*\w*)((?:[ \t\r\n]|.)*?)(^```+)[ \t]*\r?$",
+                               @"^([ ]{4}(?![ ])(?:.|\r?\n[ ]{4})*)|^(```+[ \t]*\w*)((?:(?!^```+)[\s\S])*?)(^```+)[ \t]*\r?$",
                                new Dictionary<int, string>
                                    {
                                        { 1, ScopeName.MarkdownCode },

@@ -64,8 +64,8 @@ public class Html : ILanguage
                                             |[\s\n]+([a-z0-9-_]+)[\s\n]*(=)[\s\n]*('[^\n]+?')
                                             |[\s\n]+([a-z0-9-_]+) )*
                                           [\s\n]*
-                                          (>)
-                                          (.*?)
+                                          ('])
+                                          ((?:(?!</script>).)*?)
                                           (</)(script)(>)",
                                new Dictionary<int, string>
                                    {

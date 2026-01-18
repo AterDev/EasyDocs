@@ -39,7 +39,7 @@ public class CSharp : ILanguage
         {
             return [
                 new LanguageRule(
-                    @"/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/",
+                    @"/\*(?:[^*]|\*(?!/))*\*/",
                     new Dictionary<int, string>
                         {
                             { 0, ScopeName.Comment },

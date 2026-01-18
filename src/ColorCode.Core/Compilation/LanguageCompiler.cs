@@ -16,6 +16,7 @@ public class LanguageCompiler : ILanguageCompiler
     private static readonly Regex numberOfCapturesRegex = new Regex(@"(?x)(?<!(\\|(?!\\)\(\?))\((?!\?)", RegexOptions.Compiled);
     private readonly Dictionary<string, CompiledLanguage> compiledLanguages;
     private readonly ReaderWriterLockSlim compileLock;
+    private const int RegexTimeoutMs = 5000; // 5 second timeout
 
     public LanguageCompiler(Dictionary<string, CompiledLanguage> compiledLanguages, ReaderWriterLockSlim compileLock)
     {
@@ -105,7 +106,8 @@ public class LanguageCompiler : ILanguageCompiler
         for (int i = 1; i < rules.Count; i++)
             CompileRule(rules[i], regexBuilder, captures, false);
 
-        regex = new Regex(regexBuilder.ToString());
+        regex = new Regex(regexBuilder.ToString(), RegexOptions.Compiled, 
+            TimeSpan.FromMilliseconds(RegexTimeoutMs));
     }
 
     private static void CompileRule(LanguageRule languageRule, StringBuilder regex, ICollection<string> captures, bool isFirstRule)
