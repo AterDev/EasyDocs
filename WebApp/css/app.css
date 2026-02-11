@@ -3,7 +3,7 @@
     --color-surface: #151515;
     --color-surface-2: #171717;
     --color-border: #374151;
-    --color-text: #e5e7eb;
+    --color-text: #d4d4d4;
     --color-muted: #9ca3af;
     --color-primary: #60a5fa;
     --color-primary-strong: #3b82f6;
@@ -38,10 +38,10 @@
 
 body.site-body {
     margin: 0;
-    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     background: var(--color-bg);
     color: var(--color-text);
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 ul,
@@ -70,14 +70,14 @@ a {
 .site-header {
     background: var(--color-surface-2);
     padding: 8px 0;
-    box-shadow: ;
+    box-shadow: none;
     color: var(--color-header-text);
 }
 
 .site-header-inner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 16px;
 }
 
@@ -98,6 +98,7 @@ a {
     padding: 8px 0;
     color: var(--color-header-text);
     font-size: 16px;
+    font-weight: 500;
     display: inline-flex;
     align-items: center;
 }
@@ -110,6 +111,7 @@ a {
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-left: auto;
 }
 
 .site-actions .search-group,
@@ -160,9 +162,9 @@ a {
 }
 
 .dropdown-toggle {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     cursor: pointer;
     background: transparent;
     border: none;
@@ -378,8 +380,6 @@ a {
     justify-content: center;
     padding: 4px;
     border-radius: 6px;
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
     color: var(--color-text);
 }
 
@@ -438,13 +438,11 @@ a {
 .toc-title {
     font-size: 16px;
     font-weight: 600;
+    margin: 0;
 }
 
-.toc-block {
-    padding: 8px;
-    background: var(--color-surface);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
+ul.toc {
+    padding: 0;
 }
 
 .toc-sticky {
