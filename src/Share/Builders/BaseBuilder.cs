@@ -38,6 +38,43 @@ public partial class BaseBuilder
         }
     }
 
+    protected string BuildCanonicalUrl(string? relativePath)
+    {
+        var basePath = BaseUrl;
+        if (!basePath.StartsWith('/'))
+        {
+            basePath = "/" + basePath;
+        }
+        if (!basePath.EndsWith('/'))
+        {
+            basePath += "/";
+        }
+
+        var normalized = (relativePath ?? string.Empty).Replace("\\", "/").TrimStart('/');
+        var path = string.IsNullOrWhiteSpace(normalized) ? basePath : $"{basePath}{normalized}";
+
+        if (!string.IsNullOrWhiteSpace(WebInfo?.Domain))
+        {
+            var domain = WebInfo.Domain.TrimEnd('/');
+            return path.StartsWith('/') ? domain + path : domain + "/" + path;
+        }
+
+        return path;
+    }
+
+    protected string GetPageKeywords(string? title = null)
+    {
+        if (!string.IsNullOrWhiteSpace(WebInfo?.Keywords))
+        {
+            return WebInfo!.Keywords!;
+        }
+
+        var name = WebInfo?.Name ?? string.Empty;
+        var author = WebInfo?.AuthorName ?? string.Empty;
+        var titlePart = string.IsNullOrWhiteSpace(title) ? string.Empty : $"{title},";
+        return $"{titlePart}{name},{author},blog,docs,documentation";
+    }
+
     /// <summary>
     /// 内容页TOC
     /// </summary>

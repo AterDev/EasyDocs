@@ -14,6 +14,12 @@ public class WebInfo
     public string Description { get; set; } = BlogConst.BlogDescription;
 
     /// <summary>
+    /// SEO 关键词(可选)
+    /// </summary>
+    public string? Keywords { get; set; }
+
+
+    /// <summary>
     /// 作者名称
     /// </summary>
     public string AuthorName { get; set; } = "Ater";

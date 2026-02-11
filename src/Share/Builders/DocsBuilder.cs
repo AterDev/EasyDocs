@@ -105,10 +105,15 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                         var updateTimeStr = (doc.UpdatedTime ?? doc.CreatedTime).ToString("yyyy-MM-dd HH:mm");
                         var githubLink = GetGithubLink(doc.Path);
 
+                        var canonicalUrl = BuildCanonicalUrl($"docs/{doc.HtmlPath}");
                         var htmlContent = tplContent.Replace("@{BaseUrl}", BaseUrl)
                             .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
                             .Replace("@{ExtensionHead}", extensionScript)
                             .Replace("@{Title}", title)
+                            .Replace("@{Description}", WebInfo.Description)
+                            .Replace("@{Keywords}", GetPageKeywords(title))
+                            .Replace("@{AuthorName}", WebInfo.AuthorName)
+                            .Replace("@{CanonicalUrl}", canonicalUrl)
                             .Replace("@{LeftNav}", leftNav)
                             .Replace("@{TOC}", toc)
                             .Replace("@{DocContent}", docContent)
@@ -139,7 +144,9 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                         {
                             var homepagePath = Path.Combine(outputDocPath, $"{docInfo.Name}.html");
 
-                            htmlContent = htmlContent.Replace("src=\"./_images", $"src=\"./{docInfo.Name}/{language}/{version}/_images");
+                            var homepageCanonical = BuildCanonicalUrl($"docs/{docInfo.Name}.html");
+                            htmlContent = htmlContent.Replace("src=\"./_images", $"src=\"./{docInfo.Name}/{language}/{version}/_images")
+                                .Replace(canonicalUrl, homepageCanonical);
                             docHomepages[docInfo.Name] = new GenFile
                             {
                                 Name = $"{docInfo.Name}.html",

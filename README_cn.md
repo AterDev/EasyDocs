@@ -3,7 +3,7 @@
 ![NuGet Version](https://img.shields.io/nuget/v/Ater.EasyDocs)
 
 
-🌐 [Englisth](./README.md)   🌐[中文](./README-cn.md)
+🌐 [English](./README.md)   🌐[中文](./README_cn.md)
 
 您是否想拥有自己的技术博客，或者文档站点？本工具将帮助您生成博客和文档的纯静态站点，让你可以轻松的部署到任何位置。
 
@@ -26,6 +26,7 @@
 - 随系统变化的Light和Dark主题
 - 移动端的自适应显示
 - 良好的markdown渲染支持，包括：TOC/mermaid,nomnoml,Math的渲染以及代码高亮及代码复制操作
+- 生成对 SEO 友好的 Meta 信息
 
 对技术文档的生成支持：
 
@@ -61,10 +62,17 @@ dotnet tool install -g Ater.EasyDocs
   "Description": "🗽 for freedom",// 说明，显示在主页顶部中间
   "AuthorName": "Ater", // 作者名称，显示在博客列表
   "BaseHref": "/blazor-blog/", // 子目录
-  "Domain": "https://aterdev.github.io", // 域名，生成sitemap使用，不生成则留空
+  "Domain": "https://aterdev.github.io", // 域名，用于 sitemap 与 canonical
+  "RepositoryUrl": "https://github.com/AterDev/EasyDocs", // 仓库地址，用于生成文档编辑链接
+  "Branch": "main", // 仓库分支，默认 main
+  "Icon": "favicon.ico", // 站点图标
+  "Logo": "logo.png", // 站点 Logo
+  "Keywords": "docs,blog,EasyDocs", // SEO 关键词(可选)
   "DocInfos": [
     {
       "Name": "EasyDoc",
+      "Description": "官方文档", // 文档说明
+      "Logo": "logo.png", // 文档 logo
       "Languages": [
         "zh-cn",
         "en-us"
@@ -94,6 +102,9 @@ dotnet tool install -g Ater.EasyDocs
 > 注意，`BaseHref`尾部的`/`是必需的。
 >
 > 如果你配置了自定义域名，并且没有使用子目录，请将BaseHref设置为`/`。
+
+> [!NOTE]
+> `RepositoryUrl` 和 `Branch` 用于生成文档编辑链接；`Domain` 会用于生成 `sitemap.xml` 和页面 canonical。
 
 ### 📃编写文档内容
 

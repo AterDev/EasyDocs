@@ -191,10 +191,15 @@ public class HtmlBuilder : BaseBuilder
         var fileName = Path.GetFileName(dirPath);
         var side = GetBlogSide(fileName);
         string extensionHead = GetExtensionScript(html);
+        var relativePath = GetRelativeHtmlPath(dirPath);
+        var canonicalUrl = BuildCanonicalUrl(relativePath);
 
         var tplContent = TemplateHelper.GetTplContent("blogContent.html");
         tplContent = tplContent.Replace("@{Title}", title)
             .Replace("@{Description}", WebInfo.Description)
+            .Replace("@{Keywords}", GetPageKeywords(title))
+            .Replace("@{AuthorName}", WebInfo.AuthorName)
+            .Replace("@{CanonicalUrl}", canonicalUrl)
             .Replace("@{BaseUrl}", BaseUrl)
             .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
             .Replace("@{Name}", WebInfo.Name)
@@ -203,6 +208,14 @@ public class HtmlBuilder : BaseBuilder
             .Replace("@{side}", side)
             .Replace("@{content}", html);
         return tplContent;
+    }
+
+    private string GetRelativeHtmlPath(string sourcePath)
+    {
+        var relativePath = Path.GetRelativePath(ContentPath, sourcePath).Replace("\\", "/");
+        return relativePath.EndsWith(".md", StringComparison.OrdinalIgnoreCase)
+            ? relativePath[..^3] + ".html"
+            : relativePath;
     }
 
     private string GetBlogSide(string fileName)
@@ -386,8 +399,13 @@ public class HtmlBuilder : BaseBuilder
                 docSb.Append("</div>");
             }
 
+            var indexTitle = WebInfo.Name;
             indexHtml = indexHtml.Replace("@{Name}", WebInfo.Name)
+                .Replace("@{Title}", indexTitle)
                 .Replace("@{Description}", WebInfo.Description)
+                .Replace("@{Keywords}", GetPageKeywords())
+                .Replace("@{AuthorName}", WebInfo.AuthorName)
+                .Replace("@{CanonicalUrl}", BuildCanonicalUrl(string.Empty))
                 .Replace("@{navigations}", navigations)
                 .Replace("@{blogs}", blogSb.ToString())
                 .Replace("@{docs}", docSb.ToString())
@@ -415,8 +433,13 @@ public class HtmlBuilder : BaseBuilder
             var blogHtml = GenBlogListHtml(rootCatalog, WebInfo);
             var siderBarHtml = GenSiderBar(rootCatalog);
 
+            var blogsTitle = $"{WebInfo.Name} - Blogs";
             indexHtml = indexHtml.Replace("@{Name}", WebInfo.Name)
+                .Replace("@{Title}", blogsTitle)
                 .Replace("@{Description}", WebInfo.Description)
+                .Replace("@{Keywords}", GetPageKeywords("blogs"))
+                .Replace("@{AuthorName}", WebInfo.AuthorName)
+                .Replace("@{CanonicalUrl}", BuildCanonicalUrl("blogs.html"))
                 .Replace("@{navigations}", navigations)
                 .Replace("@{BaseUrl}", BaseUrl)
                 .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")

@@ -24,6 +24,7 @@ Compared with similar tools, EasyDoc offers:
 - Support for local image paths inside documentation
 - Light and dark themes that follow the system preference while staying mobile-friendly
 - Enhanced markdown rendering with TOC, mermaid, nomnoml, Math, plus code highlighting and copy controls
+- SEO-friendly meta tags generated automatically
 
 ## 🧩 Documentation support
 
@@ -56,9 +57,16 @@ Run `ezdoc init` or create `webinfo.json` manually with the structure below:
   "AuthorName": "Ater",
   "BaseHref": "/blazor-blog/",
   "Domain": "https://aterdev.github.io",
+  "RepositoryUrl": "https://github.com/AterDev/EasyDocs",
+  "Branch": "main",
+  "Icon": "favicon.ico",
+  "Logo": "logo.png",
+  "Keywords": "docs,blog,EasyDocs",
   "DocInfos": [
     {
       "Name": "EasyDoc",
+      "Description": "Official documentation",
+      "Logo": "logo.png",
       "Languages": [
         "zh-cn",
         "en-us"
@@ -81,6 +89,8 @@ Run `ezdoc init` or create `webinfo.json` manually with the structure below:
 ```
 
 The `DocInfos` array tells EasyDoc which documentation projects to render and which languages/versions each project supports. Always keep a trailing `/` on `BaseHref`; set it to `/` when publishing from a root domain with no subfolder.
+
+`RepositoryUrl` and `Branch` drive the “Edit on GitHub” links. `Domain` is used to generate `sitemap.xml` and page canonicals.
 
 ### Authoring content
 
