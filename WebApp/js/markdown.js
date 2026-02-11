@@ -22,7 +22,7 @@ class MarkdownHandler {
     addCopyIcon(languageDiv) {
         const language = languageDiv.className.split(' ')[0].split('-')[1];
         const codeActionBar = document.createElement('div');
-        codeActionBar.classList.add('code-action-bar', 'flex', 'justify-between');
+        codeActionBar.classList.add('code-action-bar');
         codeActionBar.innerHTML = `<span>${language}</span><span class="copy-icon">${this.copyContent}</span>`;
         languageDiv.parentNode.insertBefore(codeActionBar, languageDiv);
         const copyIcon = codeActionBar.querySelector('.copy-icon');

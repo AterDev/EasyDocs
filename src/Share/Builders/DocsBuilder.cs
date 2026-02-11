@@ -343,26 +343,26 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         {
             foreach (var lang in docInfo.Languages)
             {
-                languages += $"""
-                    <a href="javascript:void(0);" onclick="doc.selectLanguage('{lang}')" class="block px-3 py-1 text">{lang}</a>
-                    """;
+                                languages += $"""
+                                        <a href="javascript:void(0);" onclick="doc.selectLanguage('{lang}')" class="dropdown-item">{lang}</a>
+                                        """;
             }
         }
 
         return $"""
-            <div class="relative dropdown">
-                <div class="relative inline-block cursor-pointer">
-                  <button type="button" class="flex items-center gap-x-1 text text-lg">
-                    🌐
-                  </button>
-                </div>
-                <div class="absolute right-0 mt-1 w-24 rounded-md bg-card dropdown-content hidden z-10 text-center">
-                    <div id="languageSelect" class="py-1" role="none">
-                    {languages}
-                    </div>
-                </div>
-            </div>
-            """;
+                        <div class="dropdown">
+                                <div>
+                                    <button type="button" class="dropdown-toggle nav-link" title="Language">
+                                        🌐
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" tabindex="-1">
+                                        <div id="languageSelect" role="none">
+                                        {languages}
+                                        </div>
+                                </div>
+                        </div>
+                        """;
     }
 
     public string BuildDocContent(Doc doc)
@@ -402,7 +402,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         // version select
 
         sb.AppendLine("""
-            <select id="versionSelect" class="border border-gray-300 dark:border-neutral-700 rounded-md p-2 my-2 w-full bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select id="versionSelect" class="version-select">
 
             """);
         foreach (var version in versions)

@@ -350,12 +350,12 @@ public class HtmlBuilder : BaseBuilder
             var blogSb = new StringBuilder();
             if (latestBlogs.Count > 0)
             {
-                blogSb.AppendLine("""
-                    <div class="text-lg my-2 font-medium">
-                      New Blogs
-                    </div>
-                    <div class="mt-2 flex gap-4 flex-wrap">
-                    """);
+                                blogSb.AppendLine("""
+                                        <div class="section-title">
+                                            New Blogs
+                                        </div>
+                                        <div class="card-grid">
+                                        """);
                 foreach (var blog in latestBlogs)
                 {
                     var date = blog.UpdatedTime?.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
@@ -375,12 +375,12 @@ public class HtmlBuilder : BaseBuilder
             var docSb = new StringBuilder();
             if (DocMenus.Count > 0)
             {
-                docSb.AppendLine("""
-                <div class="text-lg my-2 font-medium mt-4">
-                  Product Docs
-                </div>
-                <div class="mt-2 flex gap-4 flex-wrap">
-                """);
+                                docSb.AppendLine("""
+                                <div class="section-title">
+                                    Product Docs
+                                </div>
+                                <div class="card-grid">
+                                """);
 
                 foreach (var doc in DocMenus)
                 {
@@ -389,7 +389,7 @@ public class HtmlBuilder : BaseBuilder
                     docSb.AppendLine($"""
                         <a href="{BaseUrl}docs/{doc.Key}.html" target="_blank">
                             <div class="blog-card">
-                                <img src="{BaseUrl}docs/{doc.Key}/{logo}" style="max-height:200px;place-self: center;"/>
+                                <img class="doc-card-image" src="{BaseUrl}docs/{doc.Key}/{logo}" />
                                 <p class="title">{docInfo?.Name} Docs</p>
                                 <p class="sub-title">{docInfo?.Description ?? string.Empty}</p>
                             </div>
@@ -494,12 +494,12 @@ public class HtmlBuilder : BaseBuilder
         foreach (var blog in blogs)
         {
             var html = $"""
-                   <div class="w-full card-border rounded-md my-2">
-                       <div class="px-6 py-3">
-                           <div class="font-bold text-xl mb-2">
-                               <a href = "{BuildBlogPath(blog.HtmlPath)}" target="_blank" class="block text-xl py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">📑 {blog.Title}</a>
+                   <div class="card">
+                       <div class="card-body">
+                           <div class="card-title">
+                               <a href = "{BuildBlogPath(blog.HtmlPath)}" target="_blank" class="card-title-link">📑 {blog.Title}</a>
                            </div>
-                           <p class="text-neutral-700 text-base dark:text-neutral-300">
+                           <p class="card-meta">
                                👨‍💻 {webInfo?.AuthorName}
                                &nbsp;&nbsp;
                                📆 <span class="publish-time" data-time="{blog.PublishTime:yyyy-MM-ddTHH:mm:sszzz}"></span> 
@@ -526,17 +526,17 @@ public class HtmlBuilder : BaseBuilder
             .DistinctBy(b => b.ToString("yyyy-MM"))
             .ToList();
 
-        sb.AppendLine("""<div id="catalog-list" class="card-border rounded-lg shadow-md p-4 dark:bg-neutral-800">""");
-        sb.AppendLine("<div class=\"text-xl font-semibold dark:text-neutral-300\">分类</div>");
+        sb.AppendLine("""<div id="catalog-list" class="sidebar-card">""");
+        sb.AppendLine("<div class=\"sidebar-title\">分类</div>");
         sb.AppendLine($"""
-            <span data-catalog="all" class="filter-item text-lg block py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
+            <span data-catalog="all" class="filter-item">
                 全部 [{allBlogs.Count}]
             </span>
             """);
         foreach (var catalog in catalogs)
         {
             var html = $"""
-                <span data-catalog="{catalog.Name}" class="filter-item text-lg block py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
+                <span data-catalog="{catalog.Name}" class="filter-item">
                     {catalog.Name} [{catalog.Docs.Count}]
                 </span>
                 """;
@@ -545,10 +545,10 @@ public class HtmlBuilder : BaseBuilder
         }
         sb.AppendLine("</div>");
 
-        sb.AppendLine("""<div id="date-list" class="card-border rounded-lg shadow-md p-4 dark:bg-neutral-800 mt-3">""");
-        sb.AppendLine("<div class=\"text-xl font-semibold dark:text-neutral-300\">存档</div>");
+        sb.AppendLine("""<div id="date-list" class="sidebar-card">""");
+        sb.AppendLine("<div class=\"sidebar-title\">存档</div>");
         sb.AppendLine($"""
-            <span data-date="all" class="filter-item text-lg block py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
+            <span data-date="all" class="filter-item">
                 全部 [{allBlogs.Count}]
             </span>
             """);
@@ -556,7 +556,7 @@ public class HtmlBuilder : BaseBuilder
         {
             var count = allBlogs.Count(b => b.PublishTime.Year == date.Year && b.PublishTime.Month == date.Month);
             var html = $"""
-                <span data-date="{date:yyyy-MM}" class="filter-item text-lg block py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
+                <span data-date="{date:yyyy-MM}" class="filter-item">
                     {date:yyyy-MM} [{count}]
                 </span>
                 """;

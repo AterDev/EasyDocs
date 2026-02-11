@@ -3,74 +3,98 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EasyBlog-🗽to be a human</title>
+    <title>EasyBlog - Blogs</title>
     <meta name="description" content="🗽to be a human" />
+    <meta name="keywords" content="blogs,EasyBlog,NilTor,blog,docs,documentation" />
+    <meta name="author" content="NilTor" />
+    <meta name="robots" content="index, follow" />
+    <meta name="generator" content="EasyDocs" />
+    <meta name="application-name" content="EasyBlog" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="canonical" href="https://aterdev.github.io/blogs.html" />
+    <meta property="og:site_name" content="EasyBlog" />
+    <meta property="og:title" content="EasyBlog - Blogs" />
+    <meta property="og:description" content="🗽to be a human" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://aterdev.github.io/blogs.html" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="EasyBlog - Blogs" />
+    <meta name="twitter:description" content="🗽to be a human" />
     <base href="/" />
     <link rel="stylesheet" href="/css/app.css" />
     <link rel="icon" type="image/png" href="/favicon.ico" />
     <script>const baseUrl = '/';</script>
     <script src="/js/blogs.js"></script>
-    <style>
-        .dropdown:focus-within .dropdown-content {
-          display: block;
-        }
-    </style>
 </head>
 
-<body class="dark:bg-neutral-900">
-    <div class="text-white py-2 bg-block">
-    <div class="container mx-auto flex items-center space-x-4">
-      <div class="flex-none">
-        <a href="/" class="text-2xl font-semibold max-sm:hidden sm:block text-blue-600">EasyBlog</a>
+<body class="site-body">
+    <div class="site-header">
+    <div class="layout-container site-header-inner">
+      <div>
+        <a href="/" class="site-logo">EasyBlog</a>
       </div>
-      <div class="flex-grow text-left flex space-x-4 items-center">
-         <a href="/blogs.html" class="block py-2 text text-lg">Blogs</a>
-<div class="relative dropdown">
-  <div>
-    <button type="button" class="flex items-center gap-x-1 text text-lg">
-      Docs
-      <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-        data-slot="icon">
-        <path fill-rule="evenodd"
-          d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-          clip-rule="evenodd" />
-      </svg>
-    </button>
-  </div>
-  <div class="absolute z-10 mt-2 w-56 origin-top-right rounded-md bg-card dropdown-content hidden" tabindex="-1">
-    <div class="py-1" role="none">
-      
-    </div>
-  </div>
-</div>
-<a href="/about.html" target="_blank" class="block py-2 text text-lg ">About</a>
-
-      </div>
-      <div class="flex-none flex items-center">
-        <input id="searchText" placeholder="博客标题"
-          class="px-4 py-2 border border-gray-600 rounded-lg dark:bg-neutral-800 text-black dark:text-white focus:outline-none" />
-        <button id="searchBtn" class="ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
-          搜索
+      <div class="site-nav">
+         <a href="/blogs.html" class="nav-link">Blogs</a>
+<div class="dropdown">
+    <div>
+        <button type="button" class="dropdown-toggle nav-link">
+            Docs
+            <svg class="dropdown-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                data-slot="icon">
+                <path fill-rule="evenodd"
+                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                    clip-rule="evenodd" />
+            </svg>
         </button>
+    </div>
+    <div class="dropdown-menu" tabindex="-1">
+        <div role="none">
+            <a href="/docs/EasyDoc.html" class="dropdown-item">EasyDoc</a>
+
+        </div>
+    </div>
+</div>
+<a href="/about.html" target="_blank" class="nav-link">About</a>
+
+      </div>
+      <div class="site-actions">
+        <div class="search-group">
+          <input id="searchText" placeholder="博客标题" class="search-input" />
+          <button id="searchBtn" class="search-button">
+            Search
+          </button>
+        </div>
       </div>
     </div>
     </div>
 
-    <div class="container mx-auto mt-2" style="margin-bottom: 48px;">
-    <div class="flex">
-        <div class="sm:w-3/4 sm:pr-4 w-full">
+    <div class="layout-container page-content">
+    <div class="content-layout">
+        <div class="content-main">
         <!-- 博客卡片列表 -->
-        <div class="px-3" id="blogList">
+        <div class="blog-list" id="blogList">
             <!-- 博客卡片内容 -->
-            <div class="w-full card-border rounded-md my-2">
-    <div class="px-6 py-3">
-        <div class="font-bold text-xl mb-2">
-            <a href = "/blogs/.NET/2026-Make-Dotnet-Great-Again.html" target="_blank" class="block text-xl py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">📑 2026-Make-Dotnet-Great-Again</a>
+            <div class="card">
+    <div class="card-body">
+        <div class="card-title">
+            <a href = "/blogs/markdown/markdown渲染测试.html" target="_blank" class="card-title-link">📑 markdown渲染测试</a>
         </div>
-        <p class="text-neutral-700 text-base dark:text-neutral-300">
+        <p class="card-meta">
             👨‍💻 NilTor
             &nbsp;&nbsp;
-            📆 <span class="publish-time" data-time="2026-01-01T10:59:03+08:00"></span> 
+            📆 <span class="publish-time" data-time="2025-03-12T14:51:15+08:00"></span> 
+        </p>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="card-title">
+            <a href = "/blogs/作者的官方博客.html" target="_blank" class="card-title-link">📑 作者的官方博客</a>
+        </div>
+        <p class="card-meta">
+            👨‍💻 NilTor
+            &nbsp;&nbsp;
+            📆 <span class="publish-time" data-time="2025-03-11T17:45:36+08:00"></span> 
         </p>
     </div>
 </div>
@@ -78,24 +102,24 @@
         </div>
     </div>
 
-    <div class="w-1/4 mt-1 max-sm:hidden sm:block">
+    <div class="content-side">
         <!-- 分类 -->
-        <div id="catalog-list" class="card-border rounded-lg shadow-md p-4 dark:bg-neutral-800">
-<div class="text-xl font-semibold dark:text-neutral-300">分类</div>
-<span data-catalog="all" class="filter-item text-lg block py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
-    全部 [1]
+        <div id="catalog-list" class="sidebar-card">
+<div class="sidebar-title">分类</div>
+<span data-catalog="all" class="filter-item">
+    全部 [2]
 </span>
-<span data-catalog=".NET" class="filter-item text-lg block py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
-    .NET [1]
+<span data-catalog="markdown" class="filter-item">
+    markdown [1]
 </span>
 </div>
-<div id="date-list" class="card-border rounded-lg shadow-md p-4 dark:bg-neutral-800 mt-3">
-<div class="text-xl font-semibold dark:text-neutral-300">存档</div>
-<span data-date="all" class="filter-item text-lg block py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
-    全部 [1]
+<div id="date-list" class="sidebar-card">
+<div class="sidebar-title">存档</div>
+<span data-date="all" class="filter-item">
+    全部 [2]
 </span>
-<span data-date="2026-01" class="filter-item text-lg block py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
-    2026-01 [1]
+<span data-date="2025-03" class="filter-item">
+    2025-03 [2]
 </span>
 </div>
 
@@ -103,11 +127,11 @@
     </div>
     </div>
 
-  <div class="footer py-2 bottom-0 w-full fixed z-10">
-    <div class="container mx-auto text-center">
-        <p class="text-neutral-600 dark:text-neutral-300 mb-0">
+  <div class="site-footer">
+    <div class="layout-container">
+        <p class="footer-text">
         EasyBlog
-        <a class="text-blue-600" target="_blank" href="https://github.com/AterDev/EasyBlog">Powered by EasyDocs</a>
+        <a class="footer-link" target="_blank" href="https://github.com/AterDev/EasyBlog">Powered by EasyDocs</a>
         </p>
     </div>
   </div>

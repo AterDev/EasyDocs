@@ -96,20 +96,20 @@ class Index {
             blogList.innerHTML = '';
             this.blogs.forEach(blog => {
                 let blogDiv = document.createElement('div');
-                blogDiv.className = 'w-full rounded overflow-hidden shadow-lg dark:bg-neutral-800 my-2';
+                blogDiv.className = 'card';
                 let blogInnerDiv = document.createElement('div');
-                blogInnerDiv.className = 'px-6 py-3';
+                blogInnerDiv.className = 'card-body';
                 let blogTitleDiv = document.createElement('div');
-                blogTitleDiv.className = 'font-bold text-xl mb-2';
+                blogTitleDiv.className = 'card-title';
                 let blogLink = document.createElement('a');
                 blogLink.href = pathName + 'blogs/' + blog.HtmlPath;
                 blogLink.target = '_blank';
-                blogLink.className = 'block text-lg py-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100';
+                blogLink.className = 'card-title-link';
                 blogLink.innerText = "📑 " + blog.Title;
                 blogTitleDiv.appendChild(blogLink);
                 blogInnerDiv.appendChild(blogTitleDiv);
                 let blogInfoP = document.createElement('p');
-                blogInfoP.className = 'text-neutral-700 text-base dark:text-neutral-300';
+                blogInfoP.className = 'card-meta';
                 blogInfoP.innerHTML = `👨‍💻 ${this.webInfo.AuthorName} &nbsp;&nbsp; ⏱️ ${this.timeAgo(new Date(blog.PublishTime))}`;
                 blogInnerDiv.appendChild(blogInfoP);
                 blogDiv.appendChild(blogInnerDiv);

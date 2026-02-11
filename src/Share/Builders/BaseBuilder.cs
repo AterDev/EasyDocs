@@ -87,8 +87,8 @@ public partial class BaseBuilder
         if (matches.Count > 0)
         {
             var tocBuilder = new StringBuilder();
-            tocBuilder.AppendLine("<div class=\"toc-block sticky top-2\">");
-            tocBuilder.AppendLine(" <p class=\"text-lg\">TOC</p>");
+            tocBuilder.AppendLine("<div class=\"toc-block toc-sticky\">");
+            tocBuilder.AppendLine(" <p class=\"toc-title\">TOC</p>");
             tocBuilder.AppendLine(@"<ul class=""toc"">");
 
             foreach (Match match in matches)
@@ -291,40 +291,40 @@ public partial class BaseBuilder
         var navigations = new StringBuilder();
         if (hasBlog)
         {
-            navigations.AppendLine(@"<a href=""/blogs.html"" class=""block py-2 text text-lg"">Blogs</a>");
+            navigations.AppendLine(@"<a href=""/blogs.html"" class=""nav-link"">Blogs</a>");
         }
         if (hasDocs)
         {
             var docLinkHtml = "";
             foreach (var menu in DocMenus)
             {
-                docLinkHtml += $@"<a href=""/docs/{menu.Value}"" class=""block px-4 py-2 text"">{menu.Key}</a>" + Environment.NewLine;
+                docLinkHtml += $@"<a href=""/docs/{menu.Value}"" class=""dropdown-item"">{menu.Key}</a>" + Environment.NewLine;
             }
-            var docsMenuHtml = $$"""
-                <div class="relative dropdown">
-                  <div>
-                    <button type="button" class="flex items-center gap-x-1 text text-lg">
-                      Docs
-                      <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                        data-slot="icon">
-                        <path fill-rule="evenodd"
-                          d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                          clip-rule="evenodd" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="absolute z-10 mt-2 w-56 origin-top-right rounded-md bg-card dropdown-content hidden" tabindex="-1">
-                    <div class="py-1" role="none">
-                      {{docLinkHtml}}
-                    </div>
-                  </div>
-                </div>
-                """;
+                        var docsMenuHtml = $$"""
+                                <div class="dropdown">
+                                    <div>
+                                        <button type="button" class="dropdown-toggle nav-link">
+                                            Docs
+                                            <svg class="dropdown-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                                                data-slot="icon">
+                                                <path fill-rule="evenodd"
+                                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-menu" tabindex="-1">
+                                        <div role="none">
+                                            {{docLinkHtml}}
+                                        </div>
+                                    </div>
+                                </div>
+                                """;
             navigations.AppendLine(docsMenuHtml);
         }
         if (hasAbout)
         {
-            navigations.AppendLine("<a href=\"/about.html\" target=\"_blank\" class=\"block py-2 text text-lg \">About</a>");
+            navigations.AppendLine("<a href=\"/about.html\" target=\"_blank\" class=\"nav-link\">About</a>");
         }
         return navigations.ToString();
     }

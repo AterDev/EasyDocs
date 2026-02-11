@@ -25,37 +25,32 @@
     <link rel="icon" type="image/png" href="@{BaseUrl}@{FaviconPath}" />
     <script>const baseUrl = '@{BaseUrl}';</script>
     <script src="@{BaseUrl}js/index.js"></script>
-    <style>
-        .dropdown:focus-within .dropdown-content {
-          display: block;
-        }
-    </style>
 </head>
-<body class="dark:bg-neutral-900">
-    <div class="text-white py-2 bg-block">
-    <div class="container mx-auto flex items-center space-x-4">
-      <div class="flex-none">
-        <a href="/" class="text-2xl font-semibold max-sm:hidden sm:block text-blue-600">@{Name}</a>
+<body class="site-body">
+    <div class="site-header">
+    <div class="layout-container site-header-inner">
+      <div>
+        <a href="/" class="site-logo">@{Name}</a>
       </div>
-      <div class="flex-grow text-left flex space-x-4 items-center">
+      <div class="site-nav">
          @{navigations}
       </div>
-      <div class="flex-none flex items-center">
+      <div class="site-actions">
       </div>
     </div>
     </div>
 
-    <div class="container mx-auto">
+    <div class="layout-container page-content">
     @{blogs}
 
     @{docs}
     </div>
 
-    <div class="py-4 fixed bottom-0 w-full bg-block">
-    <div class="container mx-auto text-center">
-        <p class="text-neutral-600 dark:text-neutral-300">
+    <div class="site-footer">
+    <div class="layout-container">
+        <p class="footer-text">
         @{Name}
-        <a class="text-blue-600" target="_blank" href="https://github.com/AterDev/EasyBlog">Powered by EasyDocs</a>
+        <a class="footer-link" target="_blank" href="https://github.com/AterDev/EasyBlog">Powered by EasyDocs</a>
         </p>
     </div>
     </div>

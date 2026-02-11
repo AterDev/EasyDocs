@@ -26,23 +26,23 @@
     <title>@{Title}-@{Name}</title>
     @{ExtensionHead}
 </head>
-<body class="dark:bg-neutral-900 pb-4">
-    <div class="container mx-auto flex mt-2" style="margin-bottom: 48px;">
-        <div class="w-1/4 max-sm:hidden sm:block text-right pr-4 mt-3">
+<body class="site-body">
+    <div class="layout-container page-content content-layout">
+        <div class="content-side content-side-right">
         @{side}
         </div>
-        <div class="sm:w-3/4 sm:pr-4 w-full markdown-content px-3">
+        <div class="content-main markdown-content">
         @{content}
         </div>
-        <div class="w-1/4 mt-1 max-sm:hidden sm:flex">
+        <div class="content-side">
             @{toc}
         </div>
     </div>
-    <div class="footer py-2 bottom-0 w-full fixed">
-      <div class="container mx-auto text-center">
-        <p class="text-neutral-600 dark:text-neutral-300 mb-0">
+    <div class="site-footer">
+      <div class="layout-container">
+        <p class="footer-text">
         @{Name}
-        <a class="text-blue-600" target="_blank" href="https://github.com/AterDev/EasyBlog">Powered by EasyDocs</a>
+        <a class="footer-link" target="_blank" href="https://github.com/AterDev/EasyBlog">Powered by EasyDocs</a>
         </p>
       </div>
     </div>

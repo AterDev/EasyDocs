@@ -40,11 +40,11 @@
 }
 
 ul.nested > li.space {
-    margin-left: 21px;
+    margin-left: 10px;
 }
 
 .tree .space .text {
-    padding-left: 1rem;
+    padding-left: 0.5rem;
     display: block;
     width: 100%;
 }
