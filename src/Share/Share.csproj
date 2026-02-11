@@ -8,12 +8,14 @@
 	<ItemGroup>
 		<None Remove="template\blogs.html.tpl" />
 		<None Remove="template\docs.html.tpl" />
+		<None Remove="template\docsSearch.html.tpl" />
 		<None Remove="template\index.html.tpl" />
 		<None Remove="template\web.zip" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<EmbeddedResource Include="template\docs.html.tpl" />
+		<EmbeddedResource Include="template\docsSearch.html.tpl" />
 		<EmbeddedResource Include="template\blogContent.html.tpl" />
 		<EmbeddedResource Include="template\blogs.html.tpl" />
 		<EmbeddedResource Include="template\index.html.tpl" />

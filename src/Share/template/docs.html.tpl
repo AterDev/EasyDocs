@@ -40,7 +40,16 @@
          @{NavMenus}
       </div>
       <div class="flex-none flex items-center">
-        @{TopActions}
+        <div class="flex items-center gap-2">
+          <input id="docSearchInput" placeholder="Search Docs"
+            class="px-4 py-2 border border-gray-600 rounded-lg dark:bg-neutral-800 text-black dark:text-white focus:outline-none" />
+          <button id="docSearchBtn" class="ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+            Search
+          </button>
+        </div>
+        <div class="ms-3">
+          @{TopActions}
+        </div>
       </div>
     </div>
     </div>
@@ -95,5 +104,31 @@
         </p>
     </div>
   </div>
+
+  <script>
+    (function () {
+      const docData = document.getElementById('docData');
+      const inputEl = document.getElementById('docSearchInput');
+      const btnEl = document.getElementById('docSearchBtn');
+      if (!docData || !inputEl || !btnEl) return;
+
+      const docName = docData.getAttribute('data-docName');
+      const language = docData.getAttribute('data-language');
+      const version = docData.getAttribute('data-version');
+
+      function goSearch() {
+        const keyword = inputEl.value.trim();
+        const url = `${baseUrl}docs/${docName}/${language}/${version}/search.html?keyword=${encodeURIComponent(keyword)}`;
+        window.location.href = url;
+      }
+
+      btnEl.addEventListener('click', goSearch);
+      inputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          goSearch();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

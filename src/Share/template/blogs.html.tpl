@@ -45,7 +45,7 @@
         <input id="searchText" placeholder="博客标题"
           class="px-4 py-2 border border-gray-600 rounded-lg dark:bg-neutral-800 text-black dark:text-white focus:outline-none" />
         <button id="searchBtn" class="ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
-          搜索
+          Search
         </button>
       </div>
     </div>

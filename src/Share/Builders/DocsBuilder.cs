@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using Markdig;
 using Markdig.Extensions.AutoIdentifiers;
 using Share.MarkdownExtension;
@@ -13,6 +14,10 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
     private string? _gitRoot;
     private string? _repoUrl;
     private string? _branch;
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+    {
+        WriteIndented = true
+    };
 
     /// <summary>
     /// 构建文档
@@ -160,6 +165,10 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                         }
                     }
 
+                    BuildDocSearchData(docInfo, language, version, docs);
+                    var searchPage = BuildDocSearchPage(docInfo, language, version, versionSelect, docTree);
+                    genFiles.Add(searchPage);
+
                     // 其他资源文件
                     List<string> otherFiles = Directory.EnumerateFiles(docPath, "*", SearchOption.AllDirectories)
                         .Where(f => !f.EndsWith(".md"))
@@ -201,6 +210,71 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             Command.LogSuccess($"Generate doc homepage: {homepage.Path}");
         }
     }
+
+    private void BuildDocSearchData(DocInfo docInfo, string language, string version, List<Doc> docs)
+    {
+        var docItems = docs.Select(d =>
+        {
+            var markdown = File.ReadAllText(d.Path);
+            var headings = GetContentHeading2(markdown);
+            return new
+            {
+                d.Title,
+                d.HtmlPath,
+                Headings = headings,
+                UpdatedTime = (d.UpdatedTime ?? d.CreatedTime).ToString("yyyy-MM-dd HH:mm")
+            };
+        }).ToList();
+
+        var docDataPath = Path.Combine(DataPath, docInfo.Name);
+        if (!Directory.Exists(docDataPath))
+        {
+            Directory.CreateDirectory(docDataPath);
+        }
+        var searchDataPath = Path.Combine(docDataPath, $"{language}-{version}-search.json");
+        var json = JsonSerializer.Serialize(docItems, _jsonSerializerOptions);
+        File.WriteAllText(searchDataPath, json, Encoding.UTF8);
+        Command.LogSuccess($"update {docInfo.Name}-{language}-{version}-search.json!");
+    }
+
+    private GenFile BuildDocSearchPage(DocInfo docInfo, string language, string version, string versionSelect, string docTree)
+    {
+        var tplContent = TemplateHelper.GetTplContent("docsSearch.html");
+        var leftNav = versionSelect + docTree;
+        var title = $"{docInfo.Name} Search ({language} {version})";
+        var canonicalUrl = BuildCanonicalUrl($"docs/{docInfo.Name}/{language}/{version}/search.html");
+        var topActions = BuildTopActions(docInfo);
+
+        var htmlContent = tplContent.Replace("@{BaseUrl}", BaseUrl)
+            .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
+            .Replace("@{Name}", WebInfo.Name)
+            .Replace("@{Title}", title)
+            .Replace("@{Description}", WebInfo.Description)
+            .Replace("@{Keywords}", GetPageKeywords("search"))
+            .Replace("@{AuthorName}", WebInfo.AuthorName)
+            .Replace("@{CanonicalUrl}", canonicalUrl)
+            .Replace("@{DocName}", docInfo.Name)
+            .Replace("@{Language}", language)
+            .Replace("@{Version}", version)
+            .Replace("@{LeftNav}", leftNav)
+            .Replace("@{TopActions}", topActions)
+            .Replace("@{TOC}", "");
+
+        var outputFilePath = Path.Combine(Output, "docs", docInfo.Name, language, version, "search.html");
+        var dirPath = Path.GetDirectoryName(outputFilePath);
+        if (dirPath != null && !Directory.Exists(dirPath))
+        {
+            Directory.CreateDirectory(dirPath);
+        }
+
+        return new GenFile
+        {
+            Name = $"{docInfo.Name}-{language}-{version}-search.html",
+            Path = outputFilePath,
+            Content = htmlContent
+        };
+    }
+
 
     private void InitGitInfo()
     {

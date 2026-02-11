@@ -82,17 +82,13 @@ public partial class BaseBuilder
     /// <returns></returns>
     protected string? GetContentTOC(string markdown)
     {
-        markdown = Regex.Replace(markdown, @"```.*?```", "", RegexOptions.Singleline);
-        markdown = Regex.Replace(markdown, @"`.*?`", "", RegexOptions.Singleline);
-
-        string heading2Pattern = @"^##\s+(.+)$";
-        MatchCollection matches = Regex.Matches(markdown, heading2Pattern, RegexOptions.Multiline);
+        MatchCollection matches = GetHeading2Matches(markdown);
 
         if (matches.Count > 0)
         {
             var tocBuilder = new StringBuilder();
             tocBuilder.AppendLine("<div class=\"toc-block sticky top-2\">");
-            tocBuilder.AppendLine(" <p class=\"text-lg\">内容大纲</p>");
+            tocBuilder.AppendLine(" <p class=\"text-lg\">TOC</p>");
             tocBuilder.AppendLine(@"<ul class=""toc"">");
 
             foreach (Match match in matches)
@@ -114,6 +110,36 @@ public partial class BaseBuilder
             return tocBuilder.ToString();
         }
         return null;
+    }
+
+    protected List<string> GetContentHeading2(string markdown)
+    {
+        var headings = new List<string>();
+        MatchCollection matches = GetHeading2Matches(markdown);
+        foreach (Match match in matches)
+        {
+            var text = match.Groups[1].Value.Trim();
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                headings.Add(text);
+            }
+        }
+
+        return headings;
+    }
+
+    private static MatchCollection GetHeading2Matches(string markdown)
+    {
+        if (string.IsNullOrWhiteSpace(markdown))
+        {
+            return Regex.Matches(string.Empty, "$a");
+        }
+
+        markdown = Regex.Replace(markdown, @"```.*?```", "", RegexOptions.Singleline);
+        markdown = Regex.Replace(markdown, @"`.*?`", "", RegexOptions.Singleline);
+
+        string heading2Pattern = @"^##\s+(.+)$";
+        return Regex.Matches(markdown, heading2Pattern, RegexOptions.Multiline);
     }
 
     /// <summary>
