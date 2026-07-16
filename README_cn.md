@@ -27,6 +27,7 @@
 - 移动端的自适应显示
 - 良好的markdown渲染支持，包括：TOC/mermaid,nomnoml,Math的渲染以及代码高亮及代码复制操作
 - 生成对 SEO 友好的 Meta 信息
+- 支持通过 `Content/custom` 覆盖内置 CSS/JS/HTML，或添加自定义静态资源
 
 对技术文档的生成支持：
 
@@ -113,6 +114,7 @@ dotnet tool install -g Ater.EasyDocs
 - blogs目录：该目录下的内容在生成时将作为博客内容
 - docs目录：该目录下的内容在生成时将作为文档内容
 - about.md：该文档将作为关于页内容进行展示
+- custom目录：用于覆盖内置资源或添加自定义静态文件
 
 docs目录需要与配置文件中文档的配置相对应，先是`文档名称`,然后是`语言`,然后是`版本`，其目录结构如下:
 
@@ -140,13 +142,31 @@ docs目录需要与配置文件中文档的配置相对应，先是`文档名称
 在仓库根目录下，我们执行以下命令
 
 ```pwsh
-ezdoc build .\Content .\WebApp
+ezdoc build .\webinfo.json
 ```
 
-该命令将会把`Content`目录下的所有内容生成静态站点，并生成到`WebApp`目录下。
+`build`接收一个`webinfo.json`路径，输入目录和输出目录由配置文件中的`ContetPath`和`OutputPath`决定，默认生成到`WebSite`目录。旧版本的`ezdoc build <内容目录> <输出目录>`命令格式已不再适用。
 
 你可以使用`http-server`命令来启动一个本地服务器，查看生成的内容。
 
 🎉 `WebApp`目录下就是静态网站需要的一切，你可以将它自由的部署到你需要的地方。
 
 更多内容查看[官方文档](https://github.com/AterDev/EasyDocs).
+
+### 🎨自定义样式和静态文件
+
+在`Content/custom`目录下放置文件，构建完成后会递归复制到输出目录的相同相对路径，并覆盖已经存在的文件。例如：
+
+```text
+Content/custom/
+├── css/
+│   ├── app.css
+│   ├── docs.css
+│   └── markdown.css
+├── js/site.js
+└── images/banner.svg
+```
+
+因此可以通过`custom/css/app.css`、`custom/css/docs.css`和`custom/css/markdown.css`覆盖内置样式，也可以添加图片、字体或 JavaScript 等静态资源。任意新增的 CSS（例如`custom/css/site.css`）只会被复制，不会自动注入内置页面；如需加载它，需要覆盖对应的 HTML 页面，或将样式合并到内置 CSS 文件中。
+
+`custom`文件是在所有页面生成完成后复制的，所以同路径文件会覆盖生成结果，`custom/index.html`等文件也可以替换对应的生成页面。修改后需要重新执行`ezdoc build`。

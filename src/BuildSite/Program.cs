@@ -41,7 +41,7 @@ static void ShowHelp()
     init [path]
         {1}
 
-    build [contentPath] [outputPath]
+    build [configPath]
         {2}
 
     """;

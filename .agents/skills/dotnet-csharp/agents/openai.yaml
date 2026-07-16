@@ -1,0 +1,4 @@
+interface:
+  display_name: "EasyDocs .NET/C#"
+  short_description: "Develop and validate EasyDocs .NET and C# changes"
+  default_prompt: "Use $dotnet-csharp to implement a repository-native .NET/C# change in EasyDocs and validate it."
