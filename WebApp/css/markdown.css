@@ -10,6 +10,7 @@
 
 .markdown-content {
     font-family: Segoe UI, SegoeUI, Helvetica Neue, Helvetica, Arial, sans-serif;
+    max-width: 800px;
 }
 
 .markdown-content .code-action-bar {
@@ -152,7 +153,7 @@
     -webkit-overflow-scrolling: touch;
 }
 
-.markdown-content table > * {
+.markdown-content table>* {
     display: table;
     width: 100%;
     white-space: nowrap;
