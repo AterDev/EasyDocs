@@ -458,7 +458,7 @@ ul.toc {
     padding: 6px 10px;
     background: var(--color-surface-2);
     border-radius: 6px;
-    margin-bottom: 6px;
+    margin-bottom: 2px;
     font-size: 12px;
     color: var(--color-muted);
 }
@@ -511,5 +511,153 @@ ul.toc {
 
     .blog-card {
         width: 100%;
+    }
+}
+
+/* Full-width blog article layout, modeled after the documentation reading view. */
+.blog-detail-layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr) 280px;
+    gap: 0;
+    width: 100%;
+    min-height: calc(100vh - 48px);
+    padding: 28px 24px 72px;
+}
+
+.blog-detail-sidebar,
+.blog-detail-toc {
+    align-self: start;
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.blog-detail-sidebar {
+    padding: 0 28px 0 0;
+}
+
+.blog-detail-main {
+    width: min(100%, 900px);
+    justify-self: center;
+    padding: 0 36px;
+}
+
+.blog-detail-toc {
+    padding-left: 28px;
+}
+
+.blog-tree-nav {
+    color: var(--color-text);
+}
+
+.blog-tree-title {
+    color: var(--color-header-text);
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 12px;
+}
+
+.blog-tree,
+.blog-tree ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.blog-tree li {
+    margin: 2px 0;
+}
+
+.blog-tree a,
+.blog-tree summary {
+    color: var(--color-muted);
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    line-height: 1.45;
+    padding: 7px 12px;
+    border-radius: 4px;
+}
+
+.blog-tree a:hover,
+.blog-tree summary:hover {
+    color: var(--color-header-text);
+    background: var(--color-surface);
+}
+
+.blog-tree details > summary {
+    list-style: none;
+}
+
+.blog-tree details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.blog-tree details > summary::before {
+    content: "›";
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform .15s ease;
+}
+
+.blog-tree details[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.blog-tree details > ul {
+    border-left: 1px solid var(--color-border);
+    margin-left: 14px;
+    padding-left: 8px;
+}
+
+.blog-tree .blog-tree-current > a {
+    background: var(--color-surface);
+    border-left: 2px solid var(--color-primary);
+    color: var(--color-header-text);
+    font-weight: 600;
+    padding-left: 10px;
+}
+
+.blog-detail-toc .toc-title {
+    color: var(--color-header-text);
+    margin-bottom: 14px;
+}
+
+.blog-detail-toc .toc li {
+    margin: 7px 0;
+}
+
+.blog-detail-toc .toc a {
+    color: var(--color-muted);
+    font-size: 14px;
+}
+
+.blog-detail-toc .toc a:hover {
+    color: var(--color-primary);
+}
+
+@media (max-width: 1024px) {
+    .blog-detail-layout {
+        grid-template-columns: 240px minmax(0, 1fr);
+    }
+
+    .blog-detail-toc {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .blog-detail-layout {
+        display: block;
+        padding: 20px 16px 72px;
+    }
+
+    .blog-detail-sidebar {
+        display: none;
+    }
+
+    .blog-detail-main {
+        padding: 0;
     }
 }

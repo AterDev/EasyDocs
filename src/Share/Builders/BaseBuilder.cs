@@ -88,7 +88,7 @@ public partial class BaseBuilder
         {
             var tocBuilder = new StringBuilder();
             tocBuilder.AppendLine("<div class=\"toc-block toc-sticky\">");
-            tocBuilder.AppendLine(" <p class=\"toc-title\">TOC</p>");
+            tocBuilder.AppendLine(" <p class=\"toc-title\">In this article</p>");
             tocBuilder.AppendLine(@"<ul class=""toc"">");
 
             foreach (Match match in matches)

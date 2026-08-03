@@ -27,16 +27,16 @@
     @{ExtensionHead}
 </head>
 <body class="site-body">
-    <div class="layout-container page-content content-layout">
-        <div class="content-side content-side-right">
+    <div class="blog-detail-layout page-content">
+        <aside class="blog-detail-sidebar">
         @{side}
-        </div>
-        <div class="content-main markdown-content">
+        </aside>
+        <main class="blog-detail-main markdown-content">
         @{content}
-        </div>
-        <div class="content-side">
+        </main>
+        <aside class="blog-detail-toc">
             @{toc}
-        </div>
+        </aside>
     </div>
     <div class="site-footer">
       <div class="layout-container">

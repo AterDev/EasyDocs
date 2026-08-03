@@ -16,6 +16,7 @@ public class HtmlBuilder : BaseBuilder
     /// 博客列表
     /// </summary>
     public List<Doc> Blogs { get; set; } = [];
+    private Catalog? BlogCatalog { get; set; }
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -188,8 +189,7 @@ public class HtmlBuilder : BaseBuilder
 
         var title = GetTitleFromMarkdown(markdown);
         var toc = GetContentTOC(markdown) ?? "";
-        var fileName = Path.GetFileName(dirPath);
-        var side = GetBlogSide(fileName);
+        var side = GetBlogSide(dirPath);
         string extensionHead = GetExtensionScript(html);
         var relativePath = GetRelativeHtmlPath(dirPath);
         var canonicalUrl = BuildCanonicalUrl(relativePath);
@@ -218,24 +218,40 @@ public class HtmlBuilder : BaseBuilder
             : relativePath;
     }
 
-    private string GetBlogSide(string fileName)
+    private string GetBlogSide(string sourcePath)
     {
-        var blog = Blogs.Where(b => b.FileName == fileName).FirstOrDefault();
-        if (blog != null)
+        var blog = Blogs.FirstOrDefault(b => string.Equals(b.Path, sourcePath, StringComparison.OrdinalIgnoreCase));
+        if (blog != null && BlogCatalog != null)
         {
-            var updatedTime = blog.PublishTime.ToString("yyyy-MM-dd HH:mm");
-            var side = $"""
-                <div class="mt-1 sticky top-2">
-                  <span class="text">
-                    last update 
-                  </span>
-                  <br>
-                  <small>{updatedTime}</small>
-                </div>
-                """;
-            return side;
+            var side = new StringBuilder();
+            side.AppendLine("<nav class=\"blog-tree-nav\" aria-label=\"Blog categories\">");
+            side.AppendLine("<div class=\"blog-tree-title\">Blogs</div>");
+            side.AppendLine("<ul class=\"blog-tree\">");
+            GenerateBlogTree(BlogCatalog, blog.Path, side);
+            side.AppendLine("</ul>");
+            side.AppendLine("</nav>");
+            return side.ToString();
         }
         return "";
+    }
+
+    private void GenerateBlogTree(Catalog catalog, string currentPath, StringBuilder sb)
+    {
+        foreach (var doc in catalog.Docs)
+        {
+            var isCurrent = string.Equals(doc.Path, currentPath, StringComparison.OrdinalIgnoreCase);
+            var activeClass = isCurrent ? " blog-tree-current" : string.Empty;
+            sb.AppendLine($"<li class=\"blog-tree-document{activeClass}\"><a href=\"{BuildBlogPath(doc.HtmlPath)}\">{System.Net.WebUtility.HtmlEncode(doc.Title)}</a></li>");
+        }
+
+        foreach (var child in catalog.Children)
+        {
+            var containsCurrent = child.GetAllDocs().Any(doc => string.Equals(doc.Path, currentPath, StringComparison.OrdinalIgnoreCase));
+            var open = containsCurrent ? " open" : string.Empty;
+            sb.AppendLine($"<li class=\"blog-tree-category\"><details{open}><summary>{System.Net.WebUtility.HtmlEncode(child.Name)}</summary><ul>");
+            GenerateBlogTree(child, currentPath, sb);
+            sb.AppendLine("</ul></details></li>");
+        }
     }
 
     /// <summary>
@@ -260,6 +276,7 @@ public class HtmlBuilder : BaseBuilder
         var blogPath = Path.Combine(ContentPath, "blogs");
         var rootCatalog = new Catalog { Name = "Root", Path = blogPath };
         TraverseDirectory(blogPath, rootCatalog);
+        BlogCatalog = rootCatalog;
         Blogs = rootCatalog.GetAllDocs();
         string json = JsonSerializer.Serialize(rootCatalog, _jsonSerializerOptions);
 
