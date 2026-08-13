@@ -28,7 +28,7 @@
     <script src="@{BaseUrl}js/docs.js"></script>
 </head>
 
-<body class="site-body">
+<body class="site-body docs-page">
   <div class="site-header">
     <div class="layout-container site-header-inner">
       <div>
@@ -51,7 +51,7 @@
     </div>
     </div>
 
-    <div class="layout-container page-content">
+    <div class="doc-page-content page-content">
       <div id="docData" class="hidden" data-id="" data-docName="@{DocName}" data-language="@{Language}" data-version="@{Version}"></div>
       <div id="docSearchData" class="hidden" data-docName="@{DocName}" data-language="@{Language}" data-version="@{Version}"></div>
 

@@ -552,6 +552,10 @@
     background: #1e1e1e;
 }
 
+.markdown-content pre {
+    margin: 0;
+}
+
 .markdown-content .namespace {
     opacity: .7;
 }
@@ -796,4 +800,30 @@
     z-index: 1;
     white-space: pre-wrap;
     overflow: auto;
+}
+
+/* Markdig's fallback structure for languages without a highlighter. */
+.markdown-content pre:has(> code[class*="language-"]) {
+    color: #d4d4d4;
+    font-size: 14px;
+    text-shadow: none;
+    font-family: 'Cascadia Code PL', 'Cascadia Code', 'Consolas', Menlo, Monaco, 'Courier New', Courier, monospace;
+    padding: 0.5em 1em;
+    margin-bottom: 0.75rem;
+    overflow: auto;
+    background: #222224;
+    border-radius: 4px;
+    white-space: pre-wrap;
+}
+
+.markdown-content pre > code[class*="language-"] {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+    white-space: inherit;
 }

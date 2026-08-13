@@ -2,7 +2,7 @@
     --color-bg: #131313;
     --color-surface: #1e1e1e;
     --color-surface-2: #171717;
-    --color-border: #374151;
+    --color-border: #404040;
     --color-text: #d4d4d4;
     --color-muted: #9ca3af;
     --color-primary: #60a5fa;
@@ -10,6 +10,8 @@
     --color-primary-hover: #2563eb;
     --color-header-text: #ffffff;
     --color-footer-text: #9ca3af;
+    --color-nav-surface: #1f1f1f;
+    --color-nav-active: #3a3a3a;
     --color-card-border: rgba(255, 255, 255, 0.05);
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -27,6 +29,8 @@
         --color-primary-hover: #1e40af;
         --color-header-text: #111827;
         --color-footer-text: #6b7280;
+        --color-nav-surface: #f3f4f6;
+        --color-nav-active: #e5e7eb;
         --color-card-border: rgba(17, 24, 39, 0.06);
         --shadow: 0 2px 8px rgba(17, 24, 39, 0.1);
     }
@@ -42,6 +46,12 @@ body.site-body {
     background: var(--color-bg);
     color: var(--color-text);
     line-height: 1.5;
+}
+
+body.site-body.docs-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto minmax(min-content, 1fr) auto;
 }
 
 ul,
@@ -71,6 +81,7 @@ a {
     background: var(--color-surface-2);
     padding: 8px 0;
     box-shadow: none;
+    border-bottom: 1px solid var(--color-border);
     color: var(--color-header-text);
 }
 
@@ -331,29 +342,102 @@ a {
 
 .doc-layout {
     display: grid;
-    grid-template-columns: 260px 1fr 240px;
-    gap: 16px;
-    margin-top: 8px;
-    padding-top: 8px;
+    grid-template-columns: 320px minmax(0, 1fr) 280px;
+    gap: 0;
+    width: 100%;
+    margin-top: 0;
+    flex: 1 0 auto;
+    min-height: 0;
+    padding: 0;
+}
+
+.doc-page-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    min-height: 0;
+    padding: 0;
 }
 
 .doc-sidebar {
     position: sticky;
     top: 0;
     align-self: start;
-    padding-right: 16px;
+    min-width: 0;
+    min-height: 0;
+    height: min(100%, 100vh);
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 16px 20px;
+    background: var(--color-nav-surface);
+    border-right: 1px solid var(--color-border);
 }
 
 .doc-main {
     min-width: 0;
-    padding: 0 12px;
+    width: min(100%, 780px);
+    max-width: 780px;
+    justify-self: center;
+    padding: 16px 24px 0;
 }
 
 .doc-toc {
     position: sticky;
     top: 0;
     align-self: start;
-    padding-left: 12px;
+    min-width: 0;
+    min-height: 0;
+    height: min(100%, 100vh);
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 16px 24px 16px 20px;
+}
+
+.doc-toc .toc-block {
+    min-width: 0;
+    padding: 0;
+}
+
+.doc-toc .toc-title {
+    margin: 0 0 10px;
+    color: var(--color-header-text);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+}
+
+.doc-toc ul.toc {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.doc-toc ul.toc li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.doc-toc ul.toc li a {
+    display: block;
+    padding: 3px 8px;
+    border-left: 2px solid transparent;
+    color: var(--color-muted);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.doc-toc ul.toc li a:hover {
+    color: var(--color-header-text);
+}
+
+.doc-toc ul.toc li:first-child a {
+    border-left-color: var(--color-primary);
+    color: var(--color-header-text);
+    font-weight: 600;
 }
 
 .doc-header {
@@ -413,7 +497,12 @@ a {
     bottom: 0;
     width: 100%;
     background: var(--color-surface-2);
+    border-top: 1px solid var(--color-border);
     padding: 8px 0;
+}
+
+.docs-page .site-footer {
+    position: static;
 }
 
 .footer-text {
@@ -470,11 +559,16 @@ ul.toc {
 
 @media (max-width: 1024px) {
     .doc-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: 240px minmax(0, 1fr);
     }
 
     .doc-toc {
         display: none;
+    }
+
+    .doc-main {
+        width: 100%;
+        max-width: 780px;
     }
 }
 
@@ -493,6 +587,16 @@ ul.toc {
 
     .doc-sidebar {
         display: none;
+    }
+
+    .doc-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .doc-main {
+        width: 100%;
+        max-width: none;
+        padding: 16px 16px 0;
     }
 
     .site-header-inner {

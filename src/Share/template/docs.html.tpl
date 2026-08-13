@@ -30,7 +30,7 @@
     @{ExtensionHead}
 </head>
 
-<body class="site-body">
+<body class="site-body docs-page">
   <div class="site-header">
     <div class="layout-container site-header-inner">
       <div>
@@ -53,7 +53,7 @@
     </div>
     </div>
 
-    <div class="layout-container page-content">
+    <div class="doc-page-content page-content">
       <div id="docData" data-id="@{DocId}" class="hidden" data-docName="@{DocName}" data-language="@{Language}" data-version="@{Version}"></div>
       
       <!-- Mobile Navigation Drawer Overlay -->
