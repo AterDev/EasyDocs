@@ -1,4 +1,6 @@
-﻿using Share.Builders;
+using System.Globalization;
+using Share.Builders;
+using Spectre.Console;
 
 namespace Share;
 
@@ -16,11 +18,13 @@ public class Command
         {
             Directory.CreateDirectory(path);
         }
+
         var filePath = Path.Combine(path, WebConfigFileName);
         var webInfo = new WebInfo
         {
             DocInfos = [new() { Name = "example" }]
         };
+
         if (!File.Exists(filePath))
         {
             var json = JsonSerializer.Serialize(webInfo, JsonSerializerOptions);
@@ -29,9 +33,9 @@ public class Command
         }
         else
         {
-            Console.WriteLine("config file already exist!");
+            LogWarning(Language.Get("configExists") + filePath);
         }
-        // 创建目录
+
         string[] dirs = ["blogs", "docs/example/zh-cn/1.0", "docs/example/en-us/1.0"];
         foreach (var dir in dirs)
         {
@@ -41,6 +45,7 @@ public class Command
                 Directory.CreateDirectory(dirPath);
             }
         }
+
         var aboutMeFile = Path.Combine(path, "Content", "about.md");
         if (!File.Exists(aboutMeFile))
         {
@@ -84,28 +89,23 @@ public class Command
 
     public static void LogInfo(string msg)
     {
-        var now = DateTime.Now.ToString("HH:mm:ss");
-        Console.WriteLine($"ℹ️ [{now}] {msg}");
+        var now = DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+        AnsiConsole.MarkupLine($"[grey]ℹ[/] [dim]{now}[/] {Markup.Escape(msg)}");
     }
 
     public static void LogWarning(string msg)
     {
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine($"⚠️ {msg}");
-        Console.ResetColor();
+        AnsiConsole.MarkupLine($"[yellow]⚠[/] {Markup.Escape(msg)}");
     }
 
     public static void LogError(string msg)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"❌ {msg}");
-        Console.ResetColor();
+        AnsiConsole.MarkupLine($"[red]✖[/] {Markup.Escape(msg)}");
     }
+
     public static void LogSuccess(string msg)
     {
-        var now = DateTime.Now.ToString("HH:mm:ss");
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"✅ [{now}] {msg}");
-        Console.ResetColor();
+        var now = DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+        AnsiConsole.MarkupLine($"[green]✔[/] [dim]{now}[/] {Markup.Escape(msg)}");
     }
 }

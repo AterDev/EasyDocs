@@ -8,7 +8,7 @@
 		<ToolCommandName>ezdoc</ToolCommandName>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<PackageId>Ater.EasyDocs</PackageId>
-		<Version>2.3.0</Version>
+		<Version>2.3.1</Version>
 		<Description>Fast and lightweight static website generation tool!</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -19,7 +19,7 @@
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/AterDev/EasyDocs</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes>1. add multilingual product showcase pages with navigation, search, language switching, and static resource copying; 2. improve documentation ordering, BaseHref, About discovery, sitemap, and homepage sections; 3. add generator and Playwright end-to-end coverage.</PackageReleaseNotes>
+		<PackageReleaseNotes>1. optimize the CLI with Spectre.Console.Cli, localized bilingual help, styled output, and links to EasyDocs documentation and GitHub; 2. add EasyDocs 2.0 Chinese and English documentation to the Perigon documentation site; 3. improve product showcase generation and end-to-end coverage.</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -42,6 +42,10 @@
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Spectre.Console" Version="0.55.0" />
+	  <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
 	</ItemGroup>
 
 

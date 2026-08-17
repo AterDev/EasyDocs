@@ -46,6 +46,15 @@ dotnet tool install -g Ater.EasyDocs
 
 安装完成后，你可以使用`ezdoc`命令来操作。
 
+EasyDocs 使用 Spectre.Console.Cli 提供结构化帮助和带样式的输出。官方文档地址为 [dusi.dev/docs/EasyDocs.html](https://dusi.dev/docs/EasyDocs.html)，源码地址为 [github.com/AterDev/EasyDocs](https://github.com/AterDev/EasyDocs)。
+
+```powershell
+ezdoc --help
+ezdoc --version
+```
+
+`init` 和 `build` 是稳定的英文命令，同时提供 `初始化` 和 `生成` 中文别名。CLI 会根据系统 UI 语言优先显示中文或英文，并在每条命令说明中同时给出另一种语言。
+
 ## 🛠️使用工具
 
 您需要有一个`代码仓库`用来存储您的`markdown`文档，我们假设你的仓库在目录`MyDocs`中。
@@ -150,7 +159,7 @@ ezdoc build .\webinfo.json
 
 🎉 `WebApp`目录下就是静态网站需要的一切，你可以将它自由的部署到你需要的地方。
 
-更多内容查看[官方文档](https://github.com/AterDev/EasyDocs).
+更多内容查看[官方文档](https://dusi.dev/docs/EasyDocs.html)。
 
 ### 🎨自定义样式和静态文件
 

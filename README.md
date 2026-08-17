@@ -32,6 +32,17 @@ dotnet tool install -g Ater.EasyDocs
 
 The installed command is `ezdoc`.
 
+The user guide is available at [dusi.dev/docs/EasyDocs.html](https://dusi.dev/docs/EasyDocs.html), and the source code is hosted at [github.com/AterDev/EasyDocs](https://github.com/AterDev/EasyDocs).
+
+The CLI uses Spectre.Console.Cli for structured help and styled output:
+
+```powershell
+ezdoc --help
+ezdoc --version
+```
+
+`init` and `build` are the stable English command names. Chinese systems also receive Chinese-first descriptions and the `初始化` and `生成` aliases; English systems receive English-first descriptions. Each command description includes both languages.
+
 ## Quick start
 
 Create a workspace and its sample content:
