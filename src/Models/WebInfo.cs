@@ -65,6 +65,11 @@ public class WebInfo
     public string Branch { get; set; } = "main";
 
     public List<DocInfo> DocInfos { get; set; } = [];
+
+    /// <summary>
+    /// 产品信息
+    /// </summary>
+    public List<ProductInfo> ProductInfos { get; set; } = [];
 }
 /// <summary>
 /// 文档信息
@@ -90,4 +95,25 @@ public class DocVersion
 {
     public required string Version { get; set; }
 
+}
+
+/// <summary>
+/// 产品信息
+/// </summary>
+public class ProductInfo
+{
+    public required string Name { get; set; }
+
+    public string Logo { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 包含的语言，顺序也决定产品语言选择器的顺序。
+    /// </summary>
+    public string[] Languages { get; set; } = ["en-us"];
+
+    /// <summary>
+    /// 产品入口页使用的默认语言。
+    /// </summary>
+    public string DefaultLanguage { get; set; } = "en-us";
 }

@@ -15,6 +15,7 @@ Demo: [NilTor's Blog](https://dusi.dev/)
 
 - Generate a homepage, blog list, blog pages, documentation pages, documentation homepages, search pages, and an about page.
 - Configure multiple documentation projects, languages, and versions in one site.
+- Publish multilingual product landing pages with product-specific static assets.
 - Blog search, catalog filtering, and archive filtering.
 - Markdown rendering with tables, task lists, alerts, citations, figures, auto-links, heading anchors, mathematics, Mermaid/nomnoml diagrams, syntax highlighting, and code-copy controls.
 - Local images in blogs and documentation are copied to the generated site.
@@ -80,6 +81,15 @@ npx http-server .\WebSite
       "Languages": ["zh-cn", "en-us"],
       "Versions": ["2.0"]
     }
+  ],
+  "ProductInfos": [
+    {
+      "Name": "MyProduct",
+      "Description": "A sample product with multilingual product documentation.",
+      "Logo": "logo.svg",
+      "Languages": ["en-us", "zh-cn"],
+      "DefaultLanguage": "en-us"
+    }
   ]
 }
 ```
@@ -92,6 +102,7 @@ Important configuration details:
 - `RepositoryUrl` and `Branch` are optional. When set, they enable documentation edit links.
 - `Icon` is the favicon path relative to the generated site. `Logo` is used for the site/documentation presentation where applicable.
 - Each `DocInfos[].Name`, language, and version must match the corresponding directory names under `Content/docs`.
+- Each `ProductInfos[].Name` and language must match the corresponding directory under `Content/products/<name>/<language>`. `DefaultLanguage` must be one of the configured languages and its directory must exist. A product `Logo` is stored at the product directory root.
 
 ## Content layout
 
@@ -103,6 +114,16 @@ Content/
 │   └── engineering/
 │       └── second-post.md
 ├── custom/
+├── products/
+│   └── MyProduct/
+│       ├── logo.svg
+│       ├── privacy-policy.html
+│       ├── en-us/
+│       │   ├── .order
+│       │   └── overview.md
+│       └── zh-cn/
+│           ├── .order
+│           └── overview.md
 └── docs/
     └── EasyDoc/
         ├── en-us/2.0/
@@ -115,8 +136,10 @@ Content/
 - Every Markdown file under `blogs` becomes a blog page. Subdirectories become blog catalogs.
 - `about.md` becomes `about.html`.
 - Documentation uses `docs/<name>/<language>/<version>/...`. The directory names must be declared in `DocInfos`.
+- Products use `products/<name>/<language>/...`. The first Markdown file in the default language is used for the product landing page at `products/<name>.html`.
 - A `.order` file controls the order of files or directories at that level. Entries use names without the `.md` suffix.
 - Image files in blogs and docs are copied while the site is generated. Relative Markdown links to `.md` files are converted to `.html`; absolute HTTP(S) links are preserved.
+- Non-Markdown files under a product directory are copied unchanged. For example, `Content/products/MyProduct/privacy-policy.html` remains available at `products/MyProduct/privacy-policy.html`.
 
 ## Custom styles and static files
 

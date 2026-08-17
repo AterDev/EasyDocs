@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">MyProduct logo</title>
+  <desc id="desc">A blue rounded square with a white star and connected nodes.</desc>
+  <rect width="96" height="96" rx="22" fill="#2563eb"/>
+  <path d="M48 20 54.7 38.3 74 39l-15.1 11.8 5.4 18.5L48 58.8 31.7 69.3l5.4-18.5L22 39l19.3-.7L48 20Z" fill="#fff"/>
+  <circle cx="22" cy="77" r="5" fill="#bfdbfe"/>
+  <circle cx="74" cy="77" r="5" fill="#bfdbfe"/>
+  <path d="M26 74 41 61M70 74 55 61" stroke="#bfdbfe" stroke-width="4" stroke-linecap="round"/>
+</svg>

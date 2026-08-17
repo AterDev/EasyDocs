@@ -1,0 +1,32 @@
+{
+  "Name": "EasyDocs E2E",
+  "Description": "A deterministic fixture site for EasyDocs Playwright coverage.",
+  "Keywords": "easydocs,e2e,myproduct",
+  "AuthorName": "EasyDocs Test",
+  "ContetPath": "./Content",
+  "OutputPath": "./WebSite",
+  "Icon": "favicon.svg",
+  "Logo": "products/MyProduct/logo.svg",
+  "BaseHref": "/e2e/",
+  "Domain": "https://example.test",
+  "RepositoryUrl": "https://github.com/example/easydocs-e2e",
+  "Branch": "main",
+  "DocInfos": [
+    {
+      "Name": "MyProduct",
+      "Logo": "logo.svg",
+      "Description": "The MyProduct documentation fixture.",
+      "Languages": ["en-us", "zh-cn"],
+      "Versions": ["1.0"]
+    }
+  ],
+  "ProductInfos": [
+    {
+      "Name": "MyProduct",
+      "Logo": "logo.png",
+      "Description": "The MyProduct documentation fixture.",
+      "Languages": ["en-us", "zh-cn"],
+      "DefaultLanguage": "en-us"
+    }
+  ]
+}

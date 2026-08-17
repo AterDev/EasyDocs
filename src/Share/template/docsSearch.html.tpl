@@ -32,7 +32,7 @@
   <div class="site-header">
     <div class="layout-container site-header-inner">
       <div>
-        <a href="/" class="site-logo">@{Name}</a>
+        <a href="@{BaseUrl}" class="site-logo">@{Name}</a>
       </div>
       <div class="site-nav">
          @{NavMenus}

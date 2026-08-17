@@ -9,7 +9,7 @@ $location = Get-Location
 Write-Host 'Compressing files...'
 
 $filePaths = @('WebApp/css/app.css', 'WebApp/css/docs.css', 'WebApp/css/markdown.css', 'WebApp/css/keyboard_arrow_right.svg',
-    'WebApp/js/blogs.js', 'WebApp/js/docs.js', 'WebApp/js/index.js', 'WebApp/js/markdown.js',
+    'WebApp/js/blogs.js', 'WebApp/js/docs.js', 'WebApp/js/index.js', 'WebApp/js/markdown.js', 'WebApp/js/products.js',
     'WebApp/favicon.ico'
 )
 

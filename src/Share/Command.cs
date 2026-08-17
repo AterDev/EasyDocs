@@ -62,11 +62,22 @@ public class Command
             LogInfo(Language.Get("notExistWebInfo"));
         }
 
+        BaseBuilder.ResetMenus();
+
+        var productBuilder = new ProductBuilder(webInfo!);
+        productBuilder.EnableBaseUrl();
+        productBuilder.DiscoverProducts();
+
         var docBuilder = new DocsBuilder(webInfo!);
         docBuilder.EnableBaseUrl();
         docBuilder.BuildDocs();
 
-        var builder = new HtmlBuilder(webInfo!);
+        productBuilder.BuildProducts();
+
+        var builder = new HtmlBuilder(webInfo!)
+        {
+            AdditionalSitemapEntries = productBuilder.SitemapEntries
+        };
         builder.EnableBaseUrl();
         builder.BuildWebSite();
     }

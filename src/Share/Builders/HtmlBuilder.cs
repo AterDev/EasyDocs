@@ -16,6 +16,7 @@ public class HtmlBuilder : BaseBuilder
     /// 博客列表
     /// </summary>
     public List<Doc> Blogs { get; set; } = [];
+    public List<Sitemap> AdditionalSitemapEntries { get; set; } = [];
     private Catalog? BlogCatalog { get; set; }
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
@@ -95,22 +96,7 @@ public class HtmlBuilder : BaseBuilder
         var dirPath = Path.Combine(ContentPath, dirName);
         Command.LogInfo($"search files in {dirPath}");
         // 配置markdown管道
-        MarkdownPipeline pipeline = new MarkdownPipelineBuilder()
-            .UseAlertBlocks()
-            .UseFigures()
-            .UseCitations()
-            .UseFigures()
-            .UseEmphasisExtras()
-            .UseMathematics()
-            .UseMediaLinks()
-            .UseListExtras()
-            .UseTaskLists()
-            .UseDiagrams()
-            .UseAutoLinks()
-            .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
-            .UsePipeTables()
-            .UseBetterCodeBlock()
-            .Build();
+        MarkdownPipeline pipeline = CreateMarkdownPipeline();
 
         // 如果是文件存在
         if (File.Exists(dirPath))
@@ -176,13 +162,32 @@ public class HtmlBuilder : BaseBuilder
         }
     }
 
+    private static MarkdownPipeline CreateMarkdownPipeline()
+    {
+        return new MarkdownPipelineBuilder()
+            .UseAlertBlocks()
+            .UseFigures()
+            .UseCitations()
+            .UseEmphasisExtras()
+            .UseMathematics()
+            .UseMediaLinks()
+            .UseListExtras()
+            .UseTaskLists()
+            .UseDiagrams()
+            .UseAutoLinks()
+            .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
+            .UsePipeTables()
+            .UseBetterCodeBlock()
+            .Build();
+    }
+
     /// <summary>
     /// markdown to html
     /// </summary>
     /// <param name="dirPath"></param>
     /// <param name="pipeline"></param>
     /// <returns></returns>
-    private string ConvertMarkdownToHtml(string dirPath, MarkdownPipeline pipeline)
+    private string ConvertMarkdownToHtml(string dirPath, MarkdownPipeline pipeline, string? outputRelativePath = null)
     {
         string markdown = File.ReadAllText(dirPath);
         string html = Markdown.ToHtml(markdown, pipeline);
@@ -191,7 +196,7 @@ public class HtmlBuilder : BaseBuilder
         var toc = GetContentTOC(markdown) ?? "";
         var side = GetBlogSide(dirPath);
         string extensionHead = GetExtensionScript(html);
-        var relativePath = GetRelativeHtmlPath(dirPath);
+        var relativePath = outputRelativePath ?? GetRelativeHtmlPath(dirPath);
         var canonicalUrl = BuildCanonicalUrl(relativePath);
 
         var tplContent = TemplateHelper.GetTplContent("blogContent.html");
@@ -285,7 +290,7 @@ public class HtmlBuilder : BaseBuilder
         Command.LogSuccess("update blogs.json!");
         // create sitemap.xml
         var blogs = rootCatalog.GetAllDocs();
-        BuildSitemap(blogs);
+        BuildSitemap(blogs, AdditionalSitemapEntries);
     }
 
     public void BuildDocsData()
@@ -324,6 +329,7 @@ public class HtmlBuilder : BaseBuilder
                     sw.Stop();
                     Command.LogInfo($"Traverse {docInfo.Name}-{language}-{version} in {sw.ElapsedMilliseconds} ms");
 
+                    versionCatalog.FirstDocHtmlPath = GetOrderedDocs(versionCatalog).FirstOrDefault()?.HtmlPath;
                     string json = JsonSerializer.Serialize(versionCatalog, _jsonSerializerOptions);
                     string versionDataPath = Path.Combine(DataPath, docInfo.Name);
                     if (!Directory.Exists(versionDataPath))
@@ -343,7 +349,16 @@ public class HtmlBuilder : BaseBuilder
     /// </summary>
     public void BuildAboutMe()
     {
-        BuildHtmls("about.md");
+        var aboutPath = FindAboutFile(ContentPath);
+        if (aboutPath == null)
+        {
+            return;
+        }
+
+        var html = ConvertMarkdownToHtml(aboutPath, CreateMarkdownPipeline(), "about.html");
+        var outputPath = Path.Combine(Output, "about.html");
+        Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+        File.WriteAllText(outputPath, html, Encoding.UTF8);
         Command.LogSuccess("update about.html");
 
     }
@@ -392,28 +407,58 @@ public class HtmlBuilder : BaseBuilder
             var docSb = new StringBuilder();
             if (DocMenus.Count > 0)
             {
-                                docSb.AppendLine("""
-                                <div class="section-title">
-                                    Product Docs
-                                </div>
-                                <div class="card-grid">
-                                """);
+                docSb.AppendLine("<div class=\"section-title\">Docs</div>");
+                docSb.AppendLine("<div class=\"card-grid\">");
 
                 foreach (var doc in DocMenus)
                 {
                     var docInfo = WebInfo.DocInfos.FirstOrDefault(d => d.Name == doc.Key);
-                    var logo = docInfo?.Logo ?? "/default_logo.png";
-                    docSb.AppendLine($"""
-                        <a href="{BaseUrl}docs/{doc.Key}.html" target="_blank">
-                            <div class="blog-card">
-                                <img class="doc-card-image" src="{BaseUrl}docs/{doc.Key}/{logo}" />
-                                <p class="title">{docInfo?.Name} Docs</p>
-                                <p class="sub-title">{docInfo?.Description ?? string.Empty}</p>
-                            </div>
-                        </a>
-                        """);
+                    if (docInfo == null)
+                    {
+                        continue;
+                    }
+
+                    var logoPath = string.IsNullOrWhiteSpace(docInfo.Logo)
+                        ? null
+                        : Path.Combine(ContentPath, "docs", doc.Key, docInfo.Logo);
+                    var image = logoPath != null && File.Exists(logoPath)
+                        ? "<img class=\"doc-card-image\" src=\"" + BuildSiteUrl("docs/" + doc.Key + "/" + docInfo.Logo) + "\" />"
+                        : string.Empty;
+                    docSb.AppendLine("<a href=\"" + BuildSiteUrl("docs/" + doc.Key + ".html") + "\" target=\"_blank\">");
+                    docSb.AppendLine("<div class=\"blog-card\">" + image);
+                    docSb.AppendLine("<p class=\"title\">" + System.Net.WebUtility.HtmlEncode(docInfo.Name) + " Docs</p>");
+                    docSb.AppendLine("<p class=\"sub-title\">" + System.Net.WebUtility.HtmlEncode(docInfo.Description) + "</p>");
+                    docSb.AppendLine("</div></a>");
                 }
                 docSb.Append("</div>");
+            }
+
+            var productSb = new StringBuilder();
+            if (ProductMenus.Count > 0)
+            {
+                productSb.AppendLine("<div class=\"section-title\">Products</div>");
+                productSb.AppendLine("<div class=\"card-grid\">");
+                foreach (var product in ProductMenus)
+                {
+                    var productInfo = WebInfo.ProductInfos.FirstOrDefault(p => p.Name == product.Key);
+                    if (productInfo == null)
+                    {
+                        continue;
+                    }
+
+                    var logoPath = string.IsNullOrWhiteSpace(productInfo.Logo)
+                        ? null
+                        : Path.Combine(ContentPath, "products", product.Key, productInfo.Logo);
+                    var image = logoPath != null && File.Exists(logoPath)
+                        ? "<img class=\"doc-card-image\" src=\"" + BuildSiteUrl("products/" + product.Key + "/" + productInfo.Logo) + "\" />"
+                        : string.Empty;
+                    productSb.AppendLine("<a href=\"" + BuildSiteUrl("products/" + product.Key + ".html") + "\" target=\"_blank\">");
+                    productSb.AppendLine("<div class=\"blog-card\">" + image);
+                    productSb.AppendLine("<p class=\"title\">" + System.Net.WebUtility.HtmlEncode(productInfo.Name) + "</p>");
+                    productSb.AppendLine("<p class=\"sub-title\">" + System.Net.WebUtility.HtmlEncode(productInfo.Description) + "</p>");
+                    productSb.AppendLine("</div></a>");
+                }
+                productSb.Append("</div>");
             }
 
             var indexTitle = WebInfo.Name;
@@ -426,6 +471,7 @@ public class HtmlBuilder : BaseBuilder
                 .Replace("@{navigations}", navigations)
                 .Replace("@{blogs}", blogSb.ToString())
                 .Replace("@{docs}", docSb.ToString())
+                .Replace("@{products}", productSb.ToString())
                 .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
                 .Replace("@{BaseUrl}", BaseUrl);
 
@@ -471,9 +517,9 @@ public class HtmlBuilder : BaseBuilder
     /// <summary>
     /// 创建sitemap.xml
     /// </summary>
-    private void BuildSitemap(List<Doc> blogs)
+    private void BuildSitemap(List<Doc> blogs, IEnumerable<Sitemap>? additionalEntries = null)
     {
-        if (!string.IsNullOrWhiteSpace(WebInfo.Domain) && blogs.Count > 0)
+        if (!string.IsNullOrWhiteSpace(WebInfo.Domain))
         {
             var sitemaps = new List<Sitemap>();
             var domain = WebInfo.Domain.EndsWith('/') ? WebInfo.Domain[..^1] : WebInfo.Domain;
@@ -485,6 +531,16 @@ public class HtmlBuilder : BaseBuilder
                     Lastmod = blog.PublishTime.ToString("yyyy-MM-dd")
                 };
                 sitemaps.Add(sitemap);
+            }
+
+            if (additionalEntries != null)
+            {
+                sitemaps.AddRange(additionalEntries);
+            }
+
+            if (sitemaps.Count == 0)
+            {
+                return;
             }
 
             var sitemapXml = Sitemap.GetSitemaps(sitemaps);

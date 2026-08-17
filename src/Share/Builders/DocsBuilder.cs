@@ -85,7 +85,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                     }
                     var docTree = BuildTree(versionCatalog);
 
-                    var docs = versionCatalog.GetAllDocs();
+                    var docs = GetOrderedDocs(versionCatalog);
                     var firstDoc = docs.FirstOrDefault();
                     if (firstDoc != null)
                     {
@@ -367,28 +367,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
 
     public string BuildDocContent(Doc doc)
     {
-        var pipeline = new MarkdownPipelineBuilder()
-            .UseAlertBlocks()
-            .UseFigures()
-            .UseCitations()
-            .UseFigures()
-            .UseEmphasisExtras()
-            .UseMathematics()
-            .UseMediaLinks()
-            .UseListExtras()
-            .UseTaskLists()
-            .UseDiagrams()
-            .UseAutoLinks()
-            .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
-            .UsePipeTables()
-            .UseBetterCodeBlock()
-            .UseLinkConvert()
-            .Build();
-
-        string markdown = File.ReadAllText(doc.Path);
-        string html = Markdig.Markdown.ToHtml(markdown, pipeline);
-        //string relativePath = dirPath.Replace(dirPath, Path.Combine(Output, dirName)).Replace(".md", ".html");
-        return html;
+        return BuildMarkdownContent(doc);
     }
 
     /// <summary>
@@ -412,7 +391,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             string? url = "";
             if (versionCatalog != null)
             {
-                var firstDoc = versionCatalog.GetAllDocs().FirstOrDefault();
+                var firstDoc = GetOrderedDocs(versionCatalog).FirstOrDefault();
                 url = firstDoc?.HtmlPath;
             }
             sb.AppendLine($"<option data-url='{url}' value='{version}'>{version}</option>");
@@ -426,83 +405,14 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
     /// 树型导航控件
     /// </summary>
     /// <returns></returns>
-    public string BuildTree(Catalog rootCatalog)
+    public string BuildTree(Catalog rootCatalog, string routePrefix = "docs")
     {
         if (rootCatalog == null)
         {
             throw new ArgumentNullException(nameof(rootCatalog));
         }
 
-        var sb = new StringBuilder();
-        sb.AppendLine(@"<div class=""tree"">");
-        sb.AppendLine(@"<ul class=""root-list"">");
-        GenerateCatalogHtml(rootCatalog, sb);
-        sb.AppendLine("</ul>");
-        sb.AppendLine("</div>");
-        return sb.ToString();
-    }
-
-    private void GenerateCatalogHtml(Catalog catalog, StringBuilder sb)
-    {
-        var orderFile = Path.Combine(catalog.Path, ".order");
-        string[] orderData = [];
-        if (File.Exists(orderFile))
-        {
-            orderData = File.ReadLines(orderFile).Where(l => !string.IsNullOrWhiteSpace(l))
-                .ToArray();
-        }
-        var nodeItems = new List<TreeNodeItem>();
-
-        if (catalog.Docs != null && catalog.Docs.Count > 0)
-        {
-            foreach (var doc in catalog.Docs)
-            {
-                var nodeItem = new TreeNodeItem
-                {
-                    DisplayName = doc.FileName.Replace(".md", ""),
-                    Href = doc.HtmlPath,
-                    Id = ComputeMD5Hash(doc.HtmlPath)
-                };
-                nodeItems.Add(nodeItem);
-            }
-        }
-
-        if (catalog.Children != null && catalog.Children.Count > 0)
-        {
-            foreach (var child in catalog.Children)
-            {
-                var nodeItem = new TreeNodeItem
-                {
-                    DisplayName = child.Name,
-                    Href = string.Empty,
-                    Id = ComputeMD5Hash(child.Path)
-                };
-                nodeItems.Add(nodeItem);
-            }
-        }
-
-        foreach (var item in nodeItems)
-        {
-            if (string.IsNullOrEmpty(item.Href))
-            {
-                sb.AppendLine(@$"<li><span class=""caret"">{item.DisplayName}</span>");
-                sb.AppendLine(@"<ul class=""nested"">");
-
-                var child = catalog.Children?.FirstOrDefault(c => c.Name == item.DisplayName);
-                if (child != null)
-                    GenerateCatalogHtml(child, sb);
-                sb.AppendLine("</ul>");
-                sb.AppendLine("</li>");
-            }
-            else
-            {
-                sb.AppendLine($"""
-                    <li data-doc-id="{item.Id}" class="space">
-                        <a class="text" href="/docs/{item.Href}">{item.DisplayName}</a>
-                    </li>
-                    """);
-            }
-        }
+        return BuildCatalogTree(rootCatalog, routePrefix);
     }
 }
 

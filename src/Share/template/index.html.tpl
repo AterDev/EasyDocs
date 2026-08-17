@@ -20,7 +20,7 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="@{Title}" />
     <meta name="twitter:description" content="@{Description}" />
-    <base href="/" />
+    <base href="@{BaseUrl}" />
     <link rel="stylesheet" href="@{BaseUrl}css/app.css" />
     <link rel="icon" type="image/png" href="@{BaseUrl}@{FaviconPath}" />
     <script>const baseUrl = '@{BaseUrl}';</script>
@@ -30,7 +30,7 @@
     <div class="site-header">
     <div class="layout-container site-header-inner">
       <div>
-        <a href="/" class="site-logo">@{Name}</a>
+        <a href="@{BaseUrl}" class="site-logo">@{Name}</a>
       </div>
       <div class="site-nav">
          @{navigations}
@@ -44,6 +44,8 @@
     @{blogs}
 
     @{docs}
+
+    @{products}
     </div>
 
     <div class="site-footer">

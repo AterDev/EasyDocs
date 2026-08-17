@@ -8,7 +8,7 @@
 		<ToolCommandName>ezdoc</ToolCommandName>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<PackageId>Ater.EasyDocs</PackageId>
-		<Version>2.2.5</Version>
+		<Version>2.3.0</Version>
 		<Description>Fast and lightweight static website generation tool!</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -19,7 +19,7 @@
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/AterDev/EasyDocs</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes>1. isolate documentation detail layout from blog list pages; 2. refine documentation navigation, TOC, footer, table, and code block styles.</PackageReleaseNotes>
+		<PackageReleaseNotes>1. add multilingual product showcase pages with navigation, search, language switching, and static resource copying; 2. improve documentation ordering, BaseHref, About discovery, sitemap, and homepage sections; 3. add generator and Playwright end-to-end coverage.</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>

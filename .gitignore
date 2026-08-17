@@ -7,6 +7,7 @@
 WebApp/blogs/
 WebApp/docs/
 WebApp/data/
+WebApp/products/
 WebApp/index.html
 WebApp/about.html
 
@@ -404,3 +405,8 @@ FodyWeavers.xsd
 *.sln.iml
 /WebApp/about.html
 /WebApp/index.html
+
+# Playwright output
+tests/E2E/node_modules/
+tests/E2E/playwright-report/
+tests/E2E/test-results/

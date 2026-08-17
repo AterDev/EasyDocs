@@ -2,7 +2,6 @@
 
 ![NuGet Version](https://img.shields.io/nuget/v/Ater.EasyDocs)
 
-
 🌐 [English](./README.md)   🌐[中文](./README_cn.md)
 
 您是否想拥有自己的技术博客，或者文档站点？本工具将帮助您生成博客和文档的纯静态站点，让你可以轻松的部署到任何位置。
@@ -170,3 +169,41 @@ Content/custom/
 因此可以通过`custom/css/app.css`、`custom/css/docs.css`和`custom/css/markdown.css`覆盖内置样式，也可以添加图片、字体或 JavaScript 等静态资源。任意新增的 CSS（例如`custom/css/site.css`）只会被复制，不会自动注入内置页面；如需加载它，需要覆盖对应的 HTML 页面，或将样式合并到内置 CSS 文件中。
 
 `custom`文件是在所有页面生成完成后复制的，所以同路径文件会覆盖生成结果，`custom/index.html`等文件也可以替换对应的生成页面。修改后需要重新执行`ezdoc build`。
+
+### 🧩产品内容
+
+除了博客和技术文档外，还可以通过 `ProductInfos` 配置多语言产品内容：
+
+```json
+{
+  "ProductInfos": [
+    {
+      "Name": "MyProduct",
+      "Description": "一个包含多语言产品文档的示例产品",
+      "Logo": "logo.svg",
+      "Languages": ["en-us", "zh-cn"],
+      "DefaultLanguage": "en-us"
+    }
+  ]
+}
+```
+
+产品内容使用 `Content/products/<产品名称>/<语言>/...` 目录，`DefaultLanguage` 必须属于 `Languages`，并且对应语言目录必须存在。默认语言目录中的第一篇 Markdown 会作为产品入口页，生成到 `products/<产品名称>.html`。
+
+示例目录结构如下：
+
+```text
+Content/
+└── products/
+    └── MyProduct/
+        ├── logo.svg
+        ├── privacy-policy.html
+        ├── en-us/
+        │   ├── .order
+        │   └── overview.md
+        └── zh-cn/
+            ├── .order
+            └── overview.md
+```
+
+`.order` 文件中的条目不带 `.md` 后缀。产品目录根部的非 Markdown 文件会原样复制，例如 `privacy-policy.html` 可通过 `products/MyProduct/privacy-policy.html` 访问。

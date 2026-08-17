@@ -3,7 +3,7 @@
   "Description": "\uD83D\uDDFDto be a human",
   "AuthorName": "NilTor",
   "BaseHref": "/",
-  "ContentPath": "./Content",
+  "ContetPath": "./Content",
   "OutputPath": "./WebApp",
   "Domain": "https://aterdev.github.io/",
   "DocInfos": [
@@ -17,6 +17,18 @@
         "2.0",
         "1.0"
       ]
+    }
+  ],
+  "ProductInfos": [
+    {
+      "Name": "MyProduct",
+      "Logo": "logo.svg",
+      "Description": "A sample product with multilingual product documentation.",
+      "Languages": [
+        "en-us",
+        "zh-cn"
+      ],
+      "DefaultLanguage": "en-us"
     }
   ]
 }

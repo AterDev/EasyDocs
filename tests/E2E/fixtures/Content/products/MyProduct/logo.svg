@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 80" role="img" aria-labelledby="title">
+  <title>MyProduct logo</title>
+  <rect width="160" height="80" rx="16" fill="#2563eb" />
+  <path d="M35 53V27h12l9 12 9-12h12v26H66V41l-10 12-10-12v12z" fill="#fff" />
+  <circle cx="122" cy="40" r="15" fill="#93c5fd" />
+</svg>

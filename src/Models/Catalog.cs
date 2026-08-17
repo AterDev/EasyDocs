@@ -1,4 +1,6 @@
-﻿namespace Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Models;
 
 
 /// <summary>
@@ -16,6 +18,9 @@ public class Catalog
     public ICollection<Catalog> Children { get; set; } = [];
 
     public ICollection<Doc> Docs { get; set; } = [];
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? FirstDocHtmlPath { get; set; }
 
     public Catalog? Parent { get; set; }
 

@@ -115,17 +115,16 @@ class Docs {
 
     if (doc) {
       if (doc.HtmlPath) {
-        var url = new URL(window.location.href);
         let relativePath = doc.HtmlPath.replace(this.docName, '');
-        url.pathname = `/docs/${this.docName}/${language}/${this.version}${relativePath}`;
+        const target = baseUrl + 'docs/' + this.docName + '/' + language + '/' + this.version + relativePath;
 
-        fetch(url.href)
+        fetch(target)
           .then(response => {
             if (response.status === 404) {
               alert(`The language ${language} is not available for this document.`);
               return;
             } else {
-              window.location.href = url.href;
+              window.location.href = target;
             }
           });
       }
@@ -138,17 +137,16 @@ class Docs {
     let doc = await this.getFirstDoc(null, version);
     if (doc) {
       if (doc.HtmlPath) {
-        var url = new URL(window.location.href);
         let relativePath = doc.HtmlPath.replace(this.docName, '');
-        url.pathname = `/docs/${this.docName}/${this.language}/${version}${relativePath}`;
+        const target = baseUrl + 'docs/' + this.docName + '/' + this.language + '/' + version + relativePath;
 
-        fetch(url.href)
+        fetch(target)
           .then(response => {
             if (response.status === 404) {
               alert(`The version ${version} is not available for this document.`);
               return;
             } else {
-              window.location.href = url.href;
+              window.location.href = target;
             }
           });
       }
@@ -160,7 +158,7 @@ class Docs {
   async getData(language, version) {
     language = language || this.language;
     version = version || this.version;
-    const url = `/data/${this.docName}/${language}-${version}.json`;
+    const url = baseUrl + 'data/' + this.docName + '/' + language + '-' + version + '.json';
 
     let res = await fetch(url);
     if (!res.ok) {
@@ -174,6 +172,9 @@ class Docs {
   async getFirstDoc(language, version) {
     let data = await this.getData(language, version);
     if (data) {
+      if (data.FirstDocHtmlPath) {
+        return { HtmlPath: data.FirstDocHtmlPath };
+      }
       if (data.Docs.length > 0) {
         return data.Docs[0];
       } else {

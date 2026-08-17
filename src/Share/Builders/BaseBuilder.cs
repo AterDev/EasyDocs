@@ -2,6 +2,9 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Markdig;
+using Markdig.Extensions.AutoIdentifiers;
+using Share.MarkdownExtension;
 
 namespace Share.Builders;
 
@@ -15,7 +18,8 @@ public partial class BaseBuilder
 
     public string BaseUrl { get; set; }
 
-    public static Dictionary<string, string> DocMenus { get; set; } = [];
+    public static Dictionary<string, string> DocMenus { get; } = new(StringComparer.OrdinalIgnoreCase);
+    public static Dictionary<string, string> ProductMenus { get; } = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, (DateTimeOffset? Created, DateTimeOffset? Updated)> GitTimeCache = new(StringComparer.OrdinalIgnoreCase);
     private static bool _isGitLoaded = false;
     private static readonly object _gitLoadLock = new();
@@ -27,6 +31,12 @@ public partial class BaseBuilder
         ContentPath = webInfo.ContetPath.EndsWith(Path.DirectorySeparatorChar) ? webInfo.ContetPath[0..^1] : webInfo.ContetPath;
         Output = webInfo.OutputPath;
         DataPath = Path.Combine(Output, BlogConst.DataPath);
+    }
+
+    public static void ResetMenus()
+    {
+        DocMenus.Clear();
+        ProductMenus.Clear();
     }
 
     public void EnableBaseUrl()
@@ -60,6 +70,12 @@ public partial class BaseBuilder
         }
 
         return path;
+    }
+
+    protected string BuildSiteUrl(string relativePath)
+    {
+        var normalized = relativePath.Replace('\\', '/').TrimStart('/');
+        return BaseUrl.TrimEnd('/') + "/" + normalized;
     }
 
     protected string GetPageKeywords(string? title = null)
@@ -189,6 +205,77 @@ public partial class BaseBuilder
         return extensionHead;
     }
 
+    protected string BuildMarkdownContent(Doc doc)
+    {
+        var pipeline = new MarkdownPipelineBuilder()
+            .UseAlertBlocks()
+            .UseFigures()
+            .UseCitations()
+            .UseEmphasisExtras()
+            .UseMathematics()
+            .UseMediaLinks()
+            .UseListExtras()
+            .UseTaskLists()
+            .UseDiagrams()
+            .UseAutoLinks()
+            .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
+            .UsePipeTables()
+            .UseBetterCodeBlock()
+            .UseLinkConvert()
+            .Build();
+
+        var markdown = File.ReadAllText(doc.Path);
+        return Markdown.ToHtml(markdown, pipeline);
+    }
+
+    protected void CopyStaticFiles(string sourceRoot, string outputRoot, Func<string, bool>? predicate = null)
+    {
+        if (!Directory.Exists(sourceRoot))
+        {
+            return;
+        }
+
+        foreach (var file in Directory.EnumerateFiles(sourceRoot, "*", SearchOption.AllDirectories))
+        {
+            var fileName = Path.GetFileName(file);
+            if (fileName.Equals(".order", StringComparison.OrdinalIgnoreCase) ||
+                file.EndsWith(".md", StringComparison.OrdinalIgnoreCase) ||
+                predicate != null && !predicate(file))
+            {
+                continue;
+            }
+
+            var relativePath = Path.GetRelativePath(sourceRoot, file);
+            var targetPath = Path.Combine(outputRoot, relativePath);
+            var directory = Path.GetDirectoryName(targetPath);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            File.Copy(file, targetPath, true);
+        }
+    }
+
+    protected string? FindAboutFile(string contentPath)
+    {
+        if (!Directory.Exists(contentPath))
+        {
+            return null;
+        }
+
+        var candidates = Directory.EnumerateFiles(contentPath, "*.md", SearchOption.TopDirectoryOnly)
+            .Where(path => Path.GetFileName(path).Equals("about.md", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (candidates.Count > 1)
+        {
+            throw new InvalidOperationException("Only one about.md/About.md file is allowed.");
+        }
+
+        return candidates.SingleOrDefault();
+    }
+
     /// <summary>
     /// 递归构建Catalog
     /// </summary>
@@ -279,26 +366,128 @@ public partial class BaseBuilder
         }
     }
 
+    protected string BuildCatalogTree(Catalog rootCatalog, string routePrefix)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("<div class=\"tree\">");
+        sb.AppendLine("<ul class=\"root-list\">");
+        GenerateCatalogHtml(rootCatalog, routePrefix, sb);
+        sb.AppendLine("</ul>");
+        sb.AppendLine("</div>");
+        return sb.ToString();
+    }
+
+    protected List<Doc> GetOrderedDocs(Catalog catalog)
+    {
+        var docs = new List<Doc>();
+        foreach (var item in GetOrderedCatalogItems(catalog))
+        {
+            if (item.Doc != null)
+            {
+                docs.Add(item.Doc);
+            }
+            else if (item.Catalog != null)
+            {
+                docs.AddRange(GetOrderedDocs(item.Catalog));
+            }
+        }
+
+        return docs;
+    }
+
+    private void GenerateCatalogHtml(Catalog catalog, string routePrefix, StringBuilder sb)
+    {
+        foreach (var item in GetOrderedCatalogItems(catalog))
+        {
+            if (item.Doc != null)
+            {
+                var href = BuildSiteUrl(routePrefix + "/" + item.Doc.HtmlPath);
+                var displayName = Path.GetFileNameWithoutExtension(item.Doc.FileName);
+                var id = ComputeMD5Hash(item.Doc.HtmlPath);
+                sb.AppendLine("<li data-doc-id=\"" + id + "\" class=\"space\">");
+                sb.AppendLine("<a class=\"text\" href=\"" + href + "\">" +
+                    System.Net.WebUtility.HtmlEncode(displayName) + "</a>");
+                sb.AppendLine("</li>");
+                continue;
+            }
+
+            if (item.Catalog != null)
+            {
+                sb.AppendLine("<li><span class=\"caret\">" +
+                    System.Net.WebUtility.HtmlEncode(item.Catalog.Name) + "</span>");
+                sb.AppendLine("<ul class=\"nested\">");
+                GenerateCatalogHtml(item.Catalog, routePrefix, sb);
+                sb.AppendLine("</ul>");
+                sb.AppendLine("</li>");
+            }
+        }
+    }
+
+    private static IEnumerable<(Doc? Doc, Catalog? Catalog)> GetOrderedCatalogItems(Catalog catalog)
+    {
+        var docs = catalog.Docs.ToDictionary(
+            doc => Path.GetFileNameWithoutExtension(doc.FileName),
+            StringComparer.OrdinalIgnoreCase);
+        var children = catalog.Children.ToDictionary(child => child.Name, StringComparer.OrdinalIgnoreCase);
+        var consumedDocs = new HashSet<Doc>();
+        var consumedChildren = new HashSet<Catalog>();
+        var orderPath = Path.Combine(catalog.Path, ".order");
+
+        if (File.Exists(orderPath))
+        {
+            foreach (var entry in File.ReadLines(orderPath).Select(line => line.Trim()).Where(line => line.Length > 0))
+            {
+                if (docs.TryGetValue(entry, out var doc))
+                {
+                    consumedDocs.Add(doc);
+                    yield return (doc, null);
+                }
+                else if (children.TryGetValue(entry, out var child))
+                {
+                    consumedChildren.Add(child);
+                    yield return (null, child);
+                }
+            }
+        }
+
+        foreach (var doc in catalog.Docs)
+        {
+            if (consumedDocs.Add(doc))
+            {
+                yield return (doc, null);
+            }
+        }
+
+        foreach (var child in catalog.Children)
+        {
+            if (consumedChildren.Add(child))
+            {
+                yield return (null, child);
+            }
+        }
+    }
+
     /// <summary>
     /// 菜单导航
     /// </summary>
     /// <returns></returns>
     protected string BuildNavigations(string contentPath)
     {
-        var hasDocs = WebInfo.DocInfos.Count > 0;
+        var hasDocs = DocMenus.Count > 0;
+        var hasProducts = ProductMenus.Count > 0;
         var hasBlog = Directory.Exists(Path.Combine(contentPath, "blogs"));
-        var hasAbout = File.Exists(Path.Combine(contentPath, "about.md"));
+        var hasAbout = FindAboutFile(contentPath) != null;
         var navigations = new StringBuilder();
         if (hasBlog)
         {
-            navigations.AppendLine(@"<a href=""/blogs.html"" class=""nav-link"">Blogs</a>");
+            navigations.AppendLine("<a href=\"" + BuildSiteUrl("blogs.html") + "\" class=\"nav-link\">Blogs</a>");
         }
         if (hasDocs)
         {
             var docLinkHtml = "";
             foreach (var menu in DocMenus)
             {
-                docLinkHtml += $@"<a href=""/docs/{menu.Value}"" class=""dropdown-item"">{menu.Key}</a>" + Environment.NewLine;
+                docLinkHtml += "<a href=\"" + BuildSiteUrl("docs/" + menu.Value) + "\" class=\"dropdown-item\">" + System.Net.WebUtility.HtmlEncode(menu.Key) + "</a>" + Environment.NewLine;
             }
                         var docsMenuHtml = $$"""
                                 <div class="dropdown">
@@ -322,11 +511,45 @@ public partial class BaseBuilder
                                 """;
             navigations.AppendLine(docsMenuHtml);
         }
+        if (hasProducts)
+        {
+            navigations.AppendLine(BuildNavigationDropdown("Products", ProductMenus, "products"));
+        }
         if (hasAbout)
         {
-            navigations.AppendLine("<a href=\"/about.html\" target=\"_blank\" class=\"nav-link\">About</a>");
+            navigations.AppendLine("<a href=\"" + BuildSiteUrl("about.html") + "\" target=\"_blank\" class=\"nav-link\">About</a>");
         }
         return navigations.ToString();
+    }
+
+    private string BuildNavigationDropdown(string title, Dictionary<string, string> menus, string routePrefix)
+    {
+        var links = new StringBuilder();
+        foreach (var menu in menus)
+        {
+            links.AppendLine("<a href=\"" + BuildSiteUrl(routePrefix + "/" + menu.Value) +
+                "\" class=\"dropdown-item\">" +
+                System.Net.WebUtility.HtmlEncode(menu.Key) + "</a>");
+        }
+
+        var dropdownArrow = """
+            <svg class="dropdown-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                data-slot="icon">
+                <path fill-rule="evenodd"
+                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                    clip-rule="evenodd" />
+            </svg>
+            """;
+
+        return "<div class=\"dropdown\">" + Environment.NewLine +
+            "  <div><button type=\"button\" class=\"dropdown-toggle nav-link\">" +
+            System.Net.WebUtility.HtmlEncode(title) + Environment.NewLine +
+            dropdownArrow + Environment.NewLine +
+            "  </button></div>" + Environment.NewLine +
+            "  <div class=\"dropdown-menu\" tabindex=\"-1\"><div role=\"none\">" +
+            Environment.NewLine + links +
+            "  </div></div>" + Environment.NewLine +
+            "</div>";
     }
 
     private static void LoadGitHistory(string directoryPath)

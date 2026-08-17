@@ -10,6 +10,8 @@
 		<None Remove="template\docs.html.tpl" />
 		<None Remove="template\docsSearch.html.tpl" />
 		<None Remove="template\index.html.tpl" />
+		<None Remove="template\product.html.tpl" />
+		<None Remove="template\productSearch.html.tpl" />
 		<None Remove="template\web.zip" />
 	</ItemGroup>
 
@@ -19,6 +21,8 @@
 		<EmbeddedResource Include="template\blogContent.html.tpl" />
 		<EmbeddedResource Include="template\blogs.html.tpl" />
 		<EmbeddedResource Include="template\index.html.tpl" />
+		<EmbeddedResource Include="template\product.html.tpl" />
+		<EmbeddedResource Include="template\productSearch.html.tpl" />
 		<EmbeddedResource Include="template\web.zip" />
 	</ItemGroup>
 
