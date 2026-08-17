@@ -799,6 +799,7 @@
     position: relative;
     z-index: 1;
     white-space: pre-wrap;
+    font-family: inherit;
     overflow: auto;
 }
 
