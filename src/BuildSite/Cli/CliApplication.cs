@@ -1,3 +1,6 @@
+using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Share;
 using Spectre.Console.Cli;
 
@@ -7,26 +10,31 @@ internal static class CliApplication
 {
     public static int Run(string[] args)
     {
+        var builder = Host.CreateApplicationBuilder(args);
+        builder.Services.AddLocalization();
+        builder.Services.AddScoped<Localizer>();
+        builder.Services.AddScoped<InitCommand>();
+        builder.Services.AddScoped<BuildCommand>();
+
+        using var host = builder.Build();
+        var localizer = host.Services.GetRequiredService<Localizer>();
+
         CliHeader.Write();
 
-        var app = new CommandApp();
+        var app = new CommandApp(new CliTypeRegistrar(host.Services));
         app.Configure(config =>
         {
             config.SetApplicationName("ezdoc");
             config.SetApplicationVersion(CliHeader.Version);
-            config.SetApplicationCulture(Language.CurrentCulture);
+            config.SetApplicationCulture(CultureInfo.CurrentUICulture);
 
             config.AddCommand<InitCommand>("init")
-                .WithAlias("初始化")
-                .WithDescription(Language.GetBilingual("initDescription"))
-                .WithExample("init", "./site")
-                .WithExample("初始化", "./site");
+                .WithDescription(localizer.Get(Localizer.InitDescription))
+                .WithExample("init", "./site");
 
             config.AddCommand<BuildCommand>("build")
-                .WithAlias("生成")
-                .WithDescription(Language.GetBilingual("buildDescription"))
-                .WithExample("build", "./webinfo.json")
-                .WithExample("生成", "./webinfo.json");
+                .WithDescription(localizer.Get(Localizer.BuildDescription))
+                .WithExample("build", "./webinfo.json");
         });
 
         return app.Run(args);

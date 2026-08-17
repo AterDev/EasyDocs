@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InitDescription" xml:space="preserve">
+    <value>初始化站点配置和内容目录</value>
+  </data>
+  <data name="BuildDescription" xml:space="preserve">
+    <value>根据配置文件生成静态站点</value>
+  </data>
+  <data name="PathArgument" xml:space="preserve">
+    <value>工作目录路径</value>
+  </data>
+  <data name="ConfigPathArgument" xml:space="preserve">
+    <value>webinfo.json 配置文件路径</value>
+  </data>
+  <data name="BuildRequired" xml:space="preserve">
+    <value>configPath 参数是必需的。</value>
+  </data>
+  <data name="InitSuccess" xml:space="preserve">
+    <value>初始化 webinfo.json 成功： </value>
+  </data>
+  <data name="ConfigExists" xml:space="preserve">
+    <value>配置文件已存在，跳过写入： </value>
+  </data>
+  <data name="NotExistWebInfo" xml:space="preserve">
+    <value>未找到配置文件，将使用默认配置。</value>
+  </data>
+</root>

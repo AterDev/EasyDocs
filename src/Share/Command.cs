@@ -12,7 +12,7 @@ public class Command
         WriteIndented = true
     };
 
-    public static void Init(string path)
+    public static void Init(string path, Localizer? localizer = null)
     {
         if (!Directory.Exists(path))
         {
@@ -29,11 +29,11 @@ public class Command
         {
             var json = JsonSerializer.Serialize(webInfo, JsonSerializerOptions);
             File.WriteAllText(filePath, json);
-            LogSuccess(Language.Get("initSuccess") + filePath);
+            LogSuccess((localizer?.Get(Localizer.InitSuccess) ?? "Initialized webinfo.json successfully: ") + filePath);
         }
         else
         {
-            LogWarning(Language.Get("configExists") + filePath);
+            LogWarning((localizer?.Get(Localizer.ConfigExists) ?? "Configuration file already exists, skipping: ") + filePath);
         }
 
         string[] dirs = ["blogs", "docs/example/zh-cn/1.0", "docs/example/en-us/1.0"];
@@ -53,7 +53,7 @@ public class Command
         }
     }
 
-    public static void Build(string configPath)
+    public static void Build(string configPath, Localizer? localizer = null)
     {
         var webInfoPath = Path.Combine(configPath);
         var webInfo = new WebInfo();
@@ -64,7 +64,7 @@ public class Command
         }
         else
         {
-            LogInfo(Language.Get("notExistWebInfo"));
+            LogInfo(localizer?.Get(Localizer.NotExistWebInfo) ?? "Configuration file not found; using default configuration.");
         }
 
         BaseBuilder.ResetMenus();

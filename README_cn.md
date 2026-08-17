@@ -53,7 +53,7 @@ ezdoc --help
 ezdoc --version
 ```
 
-`init` 和 `build` 是稳定的英文命令，同时提供 `初始化` 和 `生成` 中文别名。CLI 会根据系统 UI 语言优先显示中文或英文，并在每条命令说明中同时给出另一种语言。
+`init` 和 `build` 是所有语言环境下统一使用的命令名。CLI 会根据当前 UI 语言只显示对应的中文或英文说明；也可以通过环境变量 `DOTNET_CLI_UI_LANGUAGE` 设置为 `zh-CN` 或 `en-US` 覆盖系统检测结果。
 
 ## 🛠️使用工具
 

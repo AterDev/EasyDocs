@@ -1,5 +1,4 @@
 using System.Reflection;
-using Share;
 using Spectre.Console;
 
 namespace BuildSite.Cli;
@@ -14,24 +13,28 @@ internal static class CliHeader
 
     public static void Write()
     {
-        var logo = new FigletText("EasyDocs")
-        {
-            Color = Color.Purple,
-            Justification = Justify.Center
-        };
+        // Keep the logo and its wording fixed. The command descriptions are localized,
+        // but the branding should remain consistent across system languages.
+        const string logo = """
+            ███████┐ ███████┐ ██████┐   ██████┐  ██████┐
+            ██┌────┘ └──███┌┘ ██┌──██┐ ██┌───██┐ ██┌───┘
+            █████┐     ███┌┘  ██│  ██│ ██│   ██│ ██│
+            ██┌──┘    ███┌┘   ██│  ██│ ██│   ██│ ██│
+            ███████┐ ███████┐ ██████┌┘ └██████┌┘ ██████┐
+            └──────┘ └──────┘ └─────┘   └─────┘  └─────┘
+            """;
+        var sign = $"🗽 for freedom.                       {Version}";
 
-        AnsiConsole.Write(new Panel(logo)
-        {
-            Border = BoxBorder.Rounded,
-            Padding = new Padding(1, 0)
-        });
+        AnsiConsole.Write(
+            new Panel(
+                new Rows(
+                    new Markup($"[bold purple]{Markup.Escape(logo.Trim())}[/]"),
+                    new Markup($"[yellow]{Markup.Escape(sign)}[/]")))
+                .Border(BoxBorder.Rounded)
+                .BorderColor(Color.Grey));
 
-        AnsiConsole.MarkupLine(
-            $"[yellow]—→ {Markup.Escape(Language.Get("tagline"))} 🗽 ←—[/] [grey]v{Markup.Escape(Version)}[/]");
-        AnsiConsole.MarkupLine(
-            $"[blue][[{Markup.Escape(Language.Get("docsLabel"))}]][/] : [underline blue]{Markup.Escape(DocsUrl)}[/]");
-        AnsiConsole.MarkupLine(
-            $"[blue][[{Markup.Escape(Language.Get("githubLabel"))}]][/] : [underline blue]{Markup.Escape(GitHubUrl)}[/]");
+        AnsiConsole.MarkupLine($"[blue][[docs]]  : [link]{Markup.Escape(DocsUrl)}[/][/]");
+        AnsiConsole.MarkupLine($"[blue][[GitHub]]: [link]{Markup.Escape(GitHubUrl)}[/][/]");
         AnsiConsole.WriteLine();
     }
 }

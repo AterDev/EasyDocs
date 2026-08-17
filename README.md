@@ -41,7 +41,7 @@ ezdoc --help
 ezdoc --version
 ```
 
-`init` and `build` are the stable English command names. Chinese systems also receive Chinese-first descriptions and the `初始化` and `生成` aliases; English systems receive English-first descriptions. Each command description includes both languages.
+`init` and `build` are the command names in every locale. The CLI selects one localized resource set from the current UI culture, so Chinese systems show Chinese descriptions and English systems show English descriptions. Set `DOTNET_CLI_UI_LANGUAGE` to `zh-CN` or `en-US` to override the detected culture.
 
 ## Quick start
 

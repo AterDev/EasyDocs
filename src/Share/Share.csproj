@@ -29,7 +29,12 @@
 	<ItemGroup>
 		<PackageReference Include="Markdig" Version="0.44.0" />
 		<PackageReference Include="Spectre.Console" Version="0.55.0" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.3" />
 	</ItemGroup>
+
+	<PropertyGroup>
+		<SatelliteResourceLanguages>zh-CN;en-US</SatelliteResourceLanguages>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\ColorCode.HTML\ColorCode.HTML.csproj" />

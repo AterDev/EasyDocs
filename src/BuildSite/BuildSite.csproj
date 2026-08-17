@@ -8,25 +8,24 @@
 		<ToolCommandName>ezdoc</ToolCommandName>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<PackageId>Ater.EasyDocs</PackageId>
-		<Version>2.3.0</Version>
+		<Version>2.3.1</Version>
 		<Description>Fast and lightweight static website generation tool!</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
 		<Copyright>Atersoft</Copyright>
-		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<SatelliteResourceLanguages>zh-CN;en-US</SatelliteResourceLanguages>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/AterDev/EasyDocs</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/AterDev/EasyDocs</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes>1. optimize the CLI with Spectre.Console.Cli, localized bilingual help, styled output, and links to EasyDocs documentation and GitHub; 2. add EasyDocs 2.0 Chinese and English documentation to the Perigon documentation site; 3. improve product showcase generation and end-to-end coverage.</PackageReleaseNotes>
+		<PackageReleaseNotes>1. replace manual bilingual CLI text with culture-aware IStringLocalizer resources and the DOTNET_CLI_UI_LANGUAGE override; 2. refine Spectre.Console CLI branding with the fixed ASCII logo, rounded panel, docs and GitHub links, and localized command output; 3. update the EasyDocs 2.0 documentation and documentation card icon.</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageTags>ater;cli;code generate;angular;webapi;asp.net core</PackageTags>
 		<Nullable>enable</Nullable>
 		<Title>EasyDocs</Title>
-		<SatelliteResourceLanguages>None</SatelliteResourceLanguages>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
@@ -46,6 +45,7 @@
 	<ItemGroup>
 	  <PackageReference Include="Spectre.Console" Version="0.55.0" />
 	  <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
+	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
 	</ItemGroup>
 
 
