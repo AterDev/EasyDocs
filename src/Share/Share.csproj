@@ -24,6 +24,7 @@
 		<EmbeddedResource Include="template\product.html.tpl" />
 		<EmbeddedResource Include="template\productSearch.html.tpl" />
 		<EmbeddedResource Include="template\web.zip" />
+		<EmbeddedResource Include="..\..\preview.cs" LogicalName="Share.template.preview.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -65,11 +65,20 @@ ezdoc --version
 
 使用`ezdoc init`命令初始化`webinfo.json`文件，或手动创建该文件，文件内容如下：
 
+执行初始化后还会生成`preview.cs`。请先修改`webinfo.json`配置；生成站点后，可以直接运行以下命令使用 .NET SDK 预览：
+
+```powershell
+dotnet run .\preview.cs -- .\WebSite
+```
+
+更多配置和使用说明请参考[官方文档](https://dusi.dev/docs/EasyDocs.html)。
+
 ```json
 {
   "Name": "Niltor Blog", // 博客名称，显示在主页顶部导航
   "Description": "🗽 for freedom",// 说明，显示在主页顶部中间
   "AuthorName": "Ater", // 作者名称，显示在博客列表
+  "EnableBlog": true, // 是否启用博客功能
   "BaseHref": "/blazor-blog/", // 子目录
   "Domain": "https://aterdev.github.io", // 域名，用于 sitemap 与 canonical
   "RepositoryUrl": "https://github.com/AterDev/EasyDocs", // 仓库地址，用于生成文档编辑链接
@@ -114,6 +123,8 @@ ezdoc --version
 
 > [!NOTE]
 > `RepositoryUrl` 和 `Branch` 用于生成文档编辑链接；`Domain` 会用于生成 `sitemap.xml` 和页面 canonical。
+>
+> `EnableBlog` 设置为 `false` 时，将不生成博客页面和博客数据，不显示顶部 Blogs 菜单及主页最新博客，也不会将博客加入 sitemap。
 
 ### 📃编写文档内容
 

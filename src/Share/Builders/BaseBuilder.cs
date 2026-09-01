@@ -88,7 +88,8 @@ public partial class BaseBuilder
         var name = WebInfo?.Name ?? string.Empty;
         var author = WebInfo?.AuthorName ?? string.Empty;
         var titlePart = string.IsNullOrWhiteSpace(title) ? string.Empty : $"{title},";
-        return $"{titlePart}{name},{author},blog,docs,documentation";
+        var blogKeyword = WebInfo?.EnableBlog != false ? ",blog" : string.Empty;
+        return $"{titlePart}{name},{author}{blogKeyword},docs,documentation";
     }
 
     /// <summary>
@@ -475,7 +476,7 @@ public partial class BaseBuilder
     {
         var hasDocs = DocMenus.Count > 0;
         var hasProducts = ProductMenus.Count > 0;
-        var hasBlog = Directory.Exists(Path.Combine(contentPath, "blogs"));
+        var hasBlog = WebInfo?.EnableBlog == true && Directory.Exists(Path.Combine(contentPath, "blogs"));
         var hasAbout = FindAboutFile(contentPath) != null;
         var navigations = new StringBuilder();
         if (hasBlog)

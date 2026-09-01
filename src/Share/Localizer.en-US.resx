@@ -30,8 +30,17 @@
   <data name="InitSuccess" xml:space="preserve">
     <value>Initialized webinfo.json successfully: </value>
   </data>
+  <data name="PreviewSuccess" xml:space="preserve">
+    <value>Initialized preview.cs successfully: </value>
+  </data>
   <data name="ConfigExists" xml:space="preserve">
     <value>Configuration file already exists, skipping: </value>
+  </data>
+  <data name="PreviewExists" xml:space="preserve">
+    <value>Preview script already exists, skipping: </value>
+  </data>
+  <data name="InitNextSteps" xml:space="preserve">
+    <value>Update webinfo.json before running build. To preview the generated site, run: dotnet run preview.cs -- .\WebSite. See the official documentation: https://dusi.dev/docs/EasyDocs.html</value>
   </data>
   <data name="NotExistWebInfo" xml:space="preserve">
     <value>Configuration file not found; using default configuration.</value>

@@ -119,6 +119,34 @@ public class ProductGenerationTests
     }
 
     [TestMethod]
+    public void Build_DisablesBlogPipelineAndBlogNavigation()
+    {
+        var configPath = CreateFixture(enableBlog: false);
+        Directory.CreateDirectory(Path.Combine(_output, "blogs"));
+        Write(Path.Combine(_output, "blogs", "Old.html"), "old blog");
+        Write(Path.Combine(_output, "data", "blogs.json"), "old blog data");
+        Write(Path.Combine(_output, "blogs.html"), "old blog list");
+        Write(Path.Combine(_output, "sitemap.xml"), "old sitemap");
+
+        Command.Build(configPath);
+
+        Assert.IsFalse(File.Exists(Path.Combine(_output, "blogs.html")));
+        Assert.IsFalse(File.Exists(Path.Combine(_output, "blogs", "Welcome.html")));
+        Assert.IsFalse(File.Exists(Path.Combine(_output, "data", "blogs.json")));
+
+        var index = File.ReadAllText(Path.Combine(_output, "index.html"));
+        Assert.IsFalse(index.Contains("New Blogs", StringComparison.Ordinal));
+        Assert.IsFalse(index.Contains("blogs.html", StringComparison.OrdinalIgnoreCase));
+
+        var docsPage = File.ReadAllText(Path.Combine(_output, "docs", "MyDocs", "en-us", "1.0", "README.html"));
+        Assert.IsFalse(docsPage.Contains("blogs.html", StringComparison.OrdinalIgnoreCase));
+
+        var sitemap = File.ReadAllText(Path.Combine(_output, "sitemap.xml"));
+        Assert.IsFalse(sitemap.Contains("/blogs/", StringComparison.OrdinalIgnoreCase));
+        StringAssert.Contains(sitemap, "/products/MyProduct.html");
+    }
+
+    [TestMethod]
     public void Build_RejectsBothAboutFilenameVariants()
     {
         if (OperatingSystem.IsWindows())
@@ -132,7 +160,7 @@ public class ProductGenerationTests
         Assert.ThrowsException<InvalidOperationException>(() => Command.Build(configPath));
     }
 
-    private string CreateFixture(bool useUppercaseAbout = false, string baseHref = "/test-site/")
+    private string CreateFixture(bool useUppercaseAbout = false, string baseHref = "/test-site/", bool enableBlog = true)
     {
         Directory.CreateDirectory(Path.Combine(_content, "blogs"));
         Directory.CreateDirectory(Path.Combine(_content, "docs", "MyDocs", "en-us", "1.0"));
@@ -162,6 +190,7 @@ public class ProductGenerationTests
             Name = "EasyDocs Test",
             Description = "Test site",
             AuthorName = "Test",
+            EnableBlog = enableBlog,
             ContetPath = _content,
             OutputPath = _output,
             BaseHref = baseHref,

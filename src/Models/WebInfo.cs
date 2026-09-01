@@ -23,6 +23,12 @@ public class WebInfo
     /// 作者名称
     /// </summary>
     public string AuthorName { get; set; } = "Ater";
+
+    /// <summary>
+    /// 是否启用博客功能。
+    /// </summary>
+    public bool EnableBlog { get; set; } = true;
+
     /// <summary>
     /// 内容目录
     /// </summary>

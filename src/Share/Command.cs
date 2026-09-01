@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using Share.Builders;
 using Spectre.Console;
 
@@ -7,6 +8,7 @@ namespace Share;
 public class Command
 {
     public static string WebConfigFileName = "webinfo.json";
+    public static string PreviewFileName = "preview.cs";
     public readonly static JsonSerializerOptions JsonSerializerOptions = new()
     {
         WriteIndented = true
@@ -51,6 +53,20 @@ public class Command
         {
             File.WriteAllText(aboutMeFile, "# About Me");
         }
+
+        var previewFile = Path.Combine(path, PreviewFileName);
+        if (!File.Exists(previewFile))
+        {
+            File.WriteAllText(previewFile, TemplateHelper.GetResourceContent(PreviewFileName), new UTF8Encoding(false));
+            LogSuccess((localizer?.Get(Localizer.PreviewSuccess) ?? "Initialized preview.cs successfully: ") + previewFile);
+        }
+        else
+        {
+            LogWarning((localizer?.Get(Localizer.PreviewExists) ?? "Preview script already exists, skipping: ") + previewFile);
+        }
+
+        LogInfo(localizer?.Get(Localizer.InitNextSteps) ??
+            "Update webinfo.json before running build. To preview the generated site, run: dotnet run preview.cs -- .\\WebSite. See the official documentation: https://dusi.dev/docs/EasyDocs.html");
     }
 
     public static void Build(string configPath, Localizer? localizer = null)

@@ -30,8 +30,17 @@
   <data name="InitSuccess" xml:space="preserve">
     <value>初始化 webinfo.json 成功： </value>
   </data>
+  <data name="PreviewSuccess" xml:space="preserve">
+    <value>初始化 preview.cs 成功： </value>
+  </data>
   <data name="ConfigExists" xml:space="preserve">
     <value>配置文件已存在，跳过写入： </value>
+  </data>
+  <data name="PreviewExists" xml:space="preserve">
+    <value>preview.cs 已存在，跳过写入： </value>
+  </data>
+  <data name="InitNextSteps" xml:space="preserve">
+    <value>请先修改 webinfo.json 配置再执行 build。预览生成的网站可运行：dotnet run preview.cs -- .\WebSite。详细说明请参考官方文档：https://dusi.dev/docs/EasyDocs.html</value>
   </data>
   <data name="NotExistWebInfo" xml:space="preserve">
     <value>未找到配置文件，将使用默认配置。</value>

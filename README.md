@@ -51,7 +51,7 @@ Create a workspace and its sample content:
 ezdoc init .
 ```
 
-This creates `webinfo.json` and a `Content` directory containing `blogs`, `docs/example/zh-cn/1.0`, `docs/example/en-us/1.0`, and `about.md`. The path is optional; without it, the current directory is used.
+This creates `webinfo.json`, `preview.cs`, and a `Content` directory containing `blogs`, `docs/example/zh-cn/1.0`, `docs/example/en-us/1.0`, and `about.md`. The path is optional; without it, the current directory is used. Update `webinfo.json` after initialization and refer to the [official documentation](https://dusi.dev/docs/EasyDocs.html) for configuration details.
 
 Build from the configuration file:
 
@@ -67,6 +67,12 @@ Preview the output with any static-file server, for example:
 npx http-server .\WebSite
 ```
 
+Alternatively, use the generated `preview.cs` with the .NET SDK:
+
+```powershell
+dotnet run .\preview.cs -- .\WebSite
+```
+
 ## Configuration
 
 `webinfo.json` contains site-wide metadata and the documentation catalog:
@@ -76,6 +82,7 @@ npx http-server .\WebSite
   "Name": "Niltor Blog",
   "Description": "A personal blog and documentation site",
   "AuthorName": "Ater",
+  "EnableBlog": true,
   "ContetPath": "./Content",
   "OutputPath": "./WebSite",
   "BaseHref": "/blazor-blog/",
@@ -111,6 +118,7 @@ Important configuration details:
 - `BaseHref` must end with `/`. Use `/` when the site is deployed at the domain root.
 - `Domain` is optional. When set, it is used for page canonical URLs and for `sitemap.xml`.
 - `RepositoryUrl` and `Branch` are optional. When set, they enable documentation edit links.
+- `EnableBlog` controls blog generation. Set it to `false` to omit the Blogs navigation, homepage blog cards, blog pages/data, and blog sitemap entries.
 - `Icon` is the favicon path relative to the generated site. `Logo` is used for the site/documentation presentation where applicable.
 - Each `DocInfos[].Name`, language, and version must match the corresponding directory names under `Content/docs`.
 - Each `ProductInfos[].Name` and language must match the corresponding directory under `Content/products/<name>/<language>`. `DefaultLanguage` must be one of the configured languages and its directory must exist. A product `Logo` is stored at the product directory root.

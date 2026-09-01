@@ -2,7 +2,9 @@
   "Name": "EasyDocs",
   "Description": "My Blog - Powered by EasyDocs",
   "AuthorName": "Ater",
+  "EnableBlog": true,
   "BaseHref": "/EasyBlog/",
-  "Favicon": "favicon.ico", 
+  "OutputPath": "./WebSite",
+  "Favicon": "favicon.ico",
   "Domain": null
 }

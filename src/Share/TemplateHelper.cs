@@ -10,13 +10,17 @@ internal class TemplateHelper
     /// <returns></returns>
     public static string GetTplContent(string tplName)
     {
-        tplName = "Share.template." + tplName + ".tpl";
-        // 读取模板文件
+        return GetResourceContent(tplName + ".tpl");
+    }
+
+    public static string GetResourceContent(string resourceName)
+    {
+        var resourcePath = "Share.template." + resourceName;
         Assembly assembly = Assembly.GetExecutingAssembly();
-        using Stream? stream = assembly.GetManifestResourceStream(tplName);
+        using Stream? stream = assembly.GetManifestResourceStream(resourcePath);
         if (stream == null)
         {
-            Console.WriteLine("  ❌ can't find tpl file:" + tplName);
+            Console.WriteLine("  ❌ can't find tpl file:" + resourcePath);
             return "";
         }
         using StreamReader reader = new(stream);

@@ -35,10 +35,16 @@ public class HtmlBuilder : BaseBuilder
         if (ExtractWebAssets())
         {
             BuildData();
-            BuildHtmls("blogs");
+            if (WebInfo.EnableBlog)
+            {
+                BuildHtmls("blogs");
+            }
             BuildAboutMe();
             BuildIndexHtml();
-            BuildBlogHtml();
+            if (WebInfo.EnableBlog)
+            {
+                BuildBlogHtml();
+            }
             CopyCustom();
         }
         else
@@ -275,8 +281,47 @@ public class HtmlBuilder : BaseBuilder
         BuildDocsData();
     }
 
+    private void RemoveBlogArtifacts()
+    {
+        if (string.Equals(
+                Path.GetFullPath(ContentPath),
+                Path.GetFullPath(Output),
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        var blogOutputPath = Path.Combine(Output, "blogs");
+        if (Directory.Exists(blogOutputPath))
+        {
+            Directory.Delete(blogOutputPath, true);
+        }
+
+        foreach (var filePath in new[]
+        {
+            Path.Combine(Output, "blogs.html"),
+            Path.Combine(DataPath, "blogs.json"),
+            Path.Combine(Output, "sitemap.xml")
+        })
+        {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+    }
+
     public void BuildBlogs()
     {
+        if (!WebInfo.EnableBlog)
+        {
+            RemoveBlogArtifacts();
+            Blogs = [];
+            BlogCatalog = null;
+            BuildSitemap([], AdditionalSitemapEntries);
+            return;
+        }
+
         // create blogs.json
         var blogPath = Path.Combine(ContentPath, "blogs");
         var rootCatalog = new Catalog { Name = "Root", Path = blogPath };
@@ -370,15 +415,24 @@ public class HtmlBuilder : BaseBuilder
     {
         var indexPath = Path.Combine(Output, "index.html");
         var indexHtml = TemplateHelper.GetTplContent("index.html");
-        var blogData = Path.Combine(DataPath, "blogs.json");
-        var blogContent = File.ReadAllText(blogData);
-        var rootCatalog = JsonSerializer.Deserialize<Catalog>(blogContent);
-        if (rootCatalog != null && WebInfo != null)
+        Catalog? rootCatalog = null;
+        if (WebInfo.EnableBlog)
+        {
+            var blogData = Path.Combine(DataPath, "blogs.json");
+            var blogContent = File.ReadAllText(blogData);
+            rootCatalog = JsonSerializer.Deserialize<Catalog>(blogContent);
+        }
+
+        if (WebInfo != null)
         {
             var navigations = BuildNavigations(ContentPath);
-            var blogHtml = GenBlogListHtml(rootCatalog, WebInfo);
+            var blogHtml = WebInfo.EnableBlog && rootCatalog != null
+                ? GenBlogListHtml(rootCatalog, WebInfo)
+                : string.Empty;
             // 生成最新的博客列表以及 文档列表(如果有)
-            var latestBlogs = Blogs.OrderByDescending(b => b.PublishTime).Take(4).ToList();
+            var latestBlogs = WebInfo.EnableBlog
+                ? Blogs.OrderByDescending(b => b.PublishTime).Take(4).ToList()
+                : [];
             var blogSb = new StringBuilder();
             if (latestBlogs.Count > 0)
             {
@@ -485,6 +539,11 @@ public class HtmlBuilder : BaseBuilder
     /// </summary>
     public void BuildBlogHtml()
     {
+        if (!WebInfo.EnableBlog)
+        {
+            return;
+        }
+
         var indexPath = Path.Combine(Output, "blogs.html");
         var indexHtml = TemplateHelper.GetTplContent("blogs.html");
         var blogData = Path.Combine(DataPath, "blogs.json");
@@ -538,13 +597,17 @@ public class HtmlBuilder : BaseBuilder
                 sitemaps.AddRange(additionalEntries);
             }
 
+            var sitemapPath = Path.Combine(Output, "sitemap.xml");
             if (sitemaps.Count == 0)
             {
+                if (File.Exists(sitemapPath))
+                {
+                    File.Delete(sitemapPath);
+                }
                 return;
             }
 
             var sitemapXml = Sitemap.GetSitemaps(sitemaps);
-            var sitemapPath = Path.Combine(Output, "sitemap.xml");
             File.WriteAllText(sitemapPath, sitemapXml, Encoding.UTF8);
             Command.LogSuccess("update sitemap.xml");
         }
