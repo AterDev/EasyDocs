@@ -20,8 +20,11 @@
     <meta name="twitter:title" content="@{Title}" />
     <meta name="twitter:description" content="@{Description}" />
     <link rel="stylesheet" href="@{BaseUrl}css/app.css">
+    <link rel="stylesheet" href="@{BaseUrl}css/docs.css">
     <link rel="stylesheet" href="@{BaseUrl}css/markdown.css">
     <link rel="icon" type="image/png" href="@{BaseUrl}@{FaviconPath}" />
+    <script>const baseUrl = '@{BaseUrl}';</script>
+    <script src="@{BaseUrl}js/docs.js"></script>
     <script src="@{BaseUrl}js/markdown.js"></script>
     <title>@{Title}-@{Name}</title>
     @{ExtensionHead}
@@ -38,7 +41,7 @@
         </div>
     </div>
     <div class="blog-detail-layout page-content">
-        <aside class="blog-detail-sidebar">
+        <aside class="blog-detail-sidebar doc-sidebar">
         @{side}
         </aside>
         <main class="blog-detail-main markdown-content">

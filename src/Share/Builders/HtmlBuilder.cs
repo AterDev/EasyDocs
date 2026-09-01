@@ -241,9 +241,9 @@ public class HtmlBuilder : BaseBuilder
         if (blog != null && BlogCatalog != null)
         {
             var side = new StringBuilder();
-            side.AppendLine("<nav class=\"blog-tree-nav\" aria-label=\"Blog categories\">");
-            side.AppendLine("<div class=\"blog-tree-title\">Blogs</div>");
-            side.AppendLine("<ul class=\"blog-tree\">");
+            side.AppendLine("<div><strong>Blogs</strong></div>");
+            side.AppendLine("<nav class=\"tree\" aria-label=\"Blog categories\">");
+            side.AppendLine("<ul class=\"root-list\">");
             GenerateBlogTree(BlogCatalog, blog.Path, side);
             side.AppendLine("</ul>");
             side.AppendLine("</nav>");
@@ -257,17 +257,18 @@ public class HtmlBuilder : BaseBuilder
         foreach (var doc in catalog.Docs)
         {
             var isCurrent = string.Equals(doc.Path, currentPath, StringComparison.OrdinalIgnoreCase);
-            var activeClass = isCurrent ? " blog-tree-current" : string.Empty;
-            sb.AppendLine($"<li class=\"blog-tree-document{activeClass}\"><a href=\"{BuildBlogPath(doc.HtmlPath)}\">{System.Net.WebUtility.HtmlEncode(doc.Title)}</a></li>");
+            var activeClass = isCurrent ? " active" : string.Empty;
+            sb.AppendLine($"<li class=\"space{activeClass}\"><a class=\"text\" href=\"{BuildBlogPath(doc.HtmlPath)}\">{System.Net.WebUtility.HtmlEncode(doc.Title)}</a></li>");
         }
 
         foreach (var child in catalog.Children)
         {
             var containsCurrent = child.GetAllDocs().Any(doc => string.Equals(doc.Path, currentPath, StringComparison.OrdinalIgnoreCase));
-            var open = containsCurrent ? " open" : string.Empty;
-            sb.AppendLine($"<li class=\"blog-tree-category\"><details{open}><summary>{System.Net.WebUtility.HtmlEncode(child.Name)}</summary><ul>");
+            var caretClass = containsCurrent ? " caret-down" : string.Empty;
+            var activeClass = containsCurrent ? " active" : string.Empty;
+            sb.AppendLine($"<li><span class=\"caret{caretClass}\">{System.Net.WebUtility.HtmlEncode(child.Name)}</span><ul class=\"nested{activeClass}\">");
             GenerateBlogTree(child, currentPath, sb);
-            sb.AppendLine("</ul></details></li>");
+            sb.AppendLine("</ul></li>");
         }
     }
 

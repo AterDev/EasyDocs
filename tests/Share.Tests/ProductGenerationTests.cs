@@ -172,6 +172,10 @@ public class ProductGenerationTests
         var blogPage = File.ReadAllText(Path.Combine(_output, "blogs", "Welcome.html"));
         StringAssert.Contains(blogPage, "class=\"site-nav\"");
         StringAssert.Contains(blogPage, "href=\"/test-site/docs/MyDocs.html\"");
+        StringAssert.Contains(blogPage, "css/docs.css");
+        StringAssert.Contains(blogPage, "class=\"blog-detail-sidebar doc-sidebar\"");
+        StringAssert.Contains(blogPage, "class=\"tree\"");
+        StringAssert.Contains(blogPage, "class=\"space active\"");
         StringAssert.Contains(blogPage, "👨‍💻 Commit Author");
         StringAssert.Contains(blogPage, "📆");
 
