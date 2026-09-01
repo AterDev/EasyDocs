@@ -156,6 +156,38 @@ docs目录需要与配置文件中文档的配置相对应，先是`文档名称
 
 按照以上约定管理您的文档即可。
 
+### Markdown 中使用图片
+
+图片不要求必须放在名为 `images` 的目录中。图片路径是相对于当前 Markdown 文件解析的，可以和 Markdown 文件放在同一目录，也可以放在任意子目录中，但引用路径必须正确：
+
+```text
+Content/docs/EasyDoc/zh-cn/2.0/
+├── 快速开始.md
+├── logo.svg
+└── assets/
+    └── architecture.png
+```
+
+```markdown
+![Logo](logo.svg)
+![架构图](assets/architecture.png)
+```
+
+博客和文档中的本地图片会在生成时复制。目前支持复制的扩展名是 `.jpg`、`.jpeg`、`.png`、`.gif` 和 `.svg`，建议使用小写扩展名。图片应放在对应的内容目录下；远程 `http://` 或 `https://` 图片地址会直接保留，不会复制到输出目录。
+
+版本化文档页支持正确的相对图片路径。不过，生成的文档入口页 `docs/<文档名>.html` 使用该文档的第一篇内容，当前构建器只会改写以 `./_images` 开头的入口页图片路径。如果图片还需要在文档入口页显示，请使用以下约定：
+
+```text
+Content/docs/EasyDoc/zh-cn/2.0/
+├── 快速开始.md
+└── _images/
+    └── architecture.png
+```
+
+```markdown
+![架构图](./_images/architecture.png)
+```
+
 ### 🔨生成静态站点
 
 在仓库根目录下，我们执行以下命令

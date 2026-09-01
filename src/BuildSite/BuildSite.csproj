@@ -8,7 +8,7 @@
 		<ToolCommandName>ezdoc</ToolCommandName>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<PackageId>Ater.EasyDocs</PackageId>
-		<Version>2.3.1</Version>
+		<Version>2.3.2</Version>
 		<Description>Fast and lightweight static website generation tool!</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -19,7 +19,7 @@
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/AterDev/EasyDocs</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes>1. replace manual bilingual CLI text with culture-aware IStringLocalizer resources and the DOTNET_CLI_UI_LANGUAGE override; 2. refine Spectre.Console CLI branding with the fixed ASCII logo, rounded panel, docs and GitHub links, and localized command output; 3. update the EasyDocs 2.0 documentation and documentation card icon.</PackageReleaseNotes>
+		<PackageReleaseNotes>Add the EnableBlog option to control blog generation and preview script output.</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
