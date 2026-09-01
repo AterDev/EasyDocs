@@ -128,6 +128,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                             .Replace("@{TopActions}", topActions)
                             .Replace("@{Version}", version)
                             .Replace("@{UpdateTime}", updateTimeStr)
+                            .Replace("@{DocAuthor}", System.Net.WebUtility.HtmlEncode(doc.AuthorName))
                             .Replace("@{GithubLink}", githubLink);
 
                         var outputFilePath = Path.Combine(outputDocPath, doc.HtmlPath);

@@ -201,6 +201,9 @@ public class HtmlBuilder : BaseBuilder
         var title = GetTitleFromMarkdown(markdown);
         var toc = GetContentTOC(markdown) ?? "";
         var side = GetBlogSide(dirPath);
+        var blog = Blogs.FirstOrDefault(b => string.Equals(b.Path, dirPath, StringComparison.OrdinalIgnoreCase));
+        var updateTime = blog?.UpdatedTime ?? blog?.CreatedTime ?? new DateTimeOffset(File.GetLastWriteTime(dirPath));
+        var authorName = blog?.AuthorName ?? WebInfo.AuthorName;
         string extensionHead = GetExtensionScript(html);
         var relativePath = outputRelativePath ?? GetRelativeHtmlPath(dirPath);
         var canonicalUrl = BuildCanonicalUrl(relativePath);
@@ -215,6 +218,9 @@ public class HtmlBuilder : BaseBuilder
             .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
             .Replace("@{Name}", WebInfo.Name)
             .Replace("@{ExtensionHead}", extensionHead)
+            .Replace("@{DocAuthor}", System.Net.WebUtility.HtmlEncode(authorName))
+            .Replace("@{UpdateTime}", updateTime.ToString("yyyy-MM-dd HH:mm"))
+            .Replace("@{NavMenus}", BuildNavigations(ContentPath))
             .Replace("@{toc}", toc)
             .Replace("@{side}", side)
             .Replace("@{content}", html);

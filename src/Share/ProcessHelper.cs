@@ -13,11 +13,15 @@ public class ProcessHelper
     /// <param name="args"></param>
     /// <param name="output"></param>
     /// <returns></returns>
-    public static bool RunCommand(string command, string? args, out string output)
+    public static bool RunCommand(string command, string? args, out string output, string? workingDirectory = null)
     {
         var process = new Process();
         process.StartInfo.FileName = command;
         process.StartInfo.Arguments = args;
+        if (!string.IsNullOrWhiteSpace(workingDirectory))
+        {
+            process.StartInfo.WorkingDirectory = workingDirectory;
+        }
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardError = true;
         process.StartInfo.RedirectStandardOutput = true;

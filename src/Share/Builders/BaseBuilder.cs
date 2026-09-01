@@ -20,7 +20,7 @@ public partial class BaseBuilder
 
     public static Dictionary<string, string> DocMenus { get; } = new(StringComparer.OrdinalIgnoreCase);
     public static Dictionary<string, string> ProductMenus { get; } = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly Dictionary<string, (DateTimeOffset? Created, DateTimeOffset? Updated)> GitTimeCache = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, (DateTimeOffset? Created, DateTimeOffset? Updated, string? CreatedAuthor, string? UpdatedAuthor)> GitTimeCache = new(StringComparer.OrdinalIgnoreCase);
     private static bool _isGitLoaded = false;
     private static readonly object _gitLoadLock = new();
 
@@ -37,6 +37,11 @@ public partial class BaseBuilder
     {
         DocMenus.Clear();
         ProductMenus.Clear();
+        lock (_gitLoadLock)
+        {
+            GitTimeCache.Clear();
+            _isGitLoaded = false;
+        }
     }
 
     public void EnableBaseUrl()
@@ -330,6 +335,7 @@ public partial class BaseBuilder
                     var fileName = Path.GetFileName(itemPath);
                     var gitAddTime = GetCreatedTime(itemPath);
                     var gitUpdateTime = GetUpdatedTime(itemPath);
+                    var gitAuthor = GetUpdatedAuthor(itemPath);
                     var doc = new Doc
                     {
                         Title = Path.GetFileNameWithoutExtension(itemPath),
@@ -338,6 +344,7 @@ public partial class BaseBuilder
                         PublishTime = gitUpdateTime ?? gitAddTime ?? fileInfo.LastWriteTime,
                         CreatedTime = gitAddTime ?? fileInfo.CreationTime,
                         UpdatedTime = gitUpdateTime ?? fileInfo.LastWriteTime,
+                        AuthorName = string.IsNullOrWhiteSpace(gitAuthor) ? WebInfo.AuthorName : gitAuthor,
                         Catalog = parentCatalog
                     };
 
@@ -563,7 +570,7 @@ public partial class BaseBuilder
             try
             {
                 // 获取 Git 根目录
-                if (!ProcessHelper.RunCommand("git", "rev-parse --show-toplevel", out string gitRoot))
+                if (!ProcessHelper.RunCommand("git", "rev-parse --show-toplevel", out string gitRoot, directoryPath))
                 {
                     _isGitLoaded = true; // Git 不可用，跳过
                     return;
@@ -572,10 +579,10 @@ public partial class BaseBuilder
 
                 var process = new Process();
                 process.StartInfo.FileName = "git";
-                // 获取所有提交日志，格式：COMMIT_DATE:ISO8601
+                // 获取所有提交日志，格式：COMMIT_DATE:ISO8601 和 COMMIT_AUTHOR:name
                 // 紧接着是文件状态和路径
                 // 增加 -c core.quotepath=false 防止中文路径被转义
-                process.StartInfo.Arguments = "-c core.quotepath=false log --name-status --date=iso-strict --format=\"COMMIT_DATE:%ad\"";
+                process.StartInfo.Arguments = "-c core.quotepath=false log --name-status --date=iso-strict --format=\"COMMIT_DATE:%ad%nCOMMIT_AUTHOR:%an\"";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
@@ -586,6 +593,7 @@ public partial class BaseBuilder
 
                 string? line;
                 DateTimeOffset currentCommitDate = DateTimeOffset.MinValue;
+                string? currentCommitAuthor = null;
 
                 while ((line = process.StandardOutput.ReadLine()) != null)
                 {
@@ -597,6 +605,12 @@ public partial class BaseBuilder
                         {
                             currentCommitDate = date;
                         }
+                        continue;
+                    }
+
+                    if (line.StartsWith("COMMIT_AUTHOR:", StringComparison.Ordinal))
+                    {
+                        currentCommitAuthor = line[14..].Trim();
                         continue;
                     }
 
@@ -616,8 +630,7 @@ public partial class BaseBuilder
                         if (!GitTimeCache.TryGetValue(fullPath, out var info))
                         {
                             // 第一次遇到文件（从新到旧），这是最后修改时间
-                            info.Updated = currentCommitDate;
-                            GitTimeCache[fullPath] = info;
+                            GitTimeCache[fullPath] = (null, currentCommitDate, null, currentCommitAuthor);
                         }
 
                         // 如果是添加操作，更新创建时间（从新到旧扫描，越旧的 A 越接近真实创建时间）
@@ -632,6 +645,7 @@ public partial class BaseBuilder
                             if (!currentInfo.Created.HasValue)
                             {
                                 currentInfo.Created = currentCommitDate;
+                                currentInfo.CreatedAuthor = currentCommitAuthor;
                                 GitTimeCache[fullPath] = currentInfo;
                             }
                         }
@@ -680,6 +694,19 @@ public partial class BaseBuilder
 
         return ProcessHelper.RunCommand("git", @$"log -n 1 --format=%aI -- ""{path}""", out string output)
             ? ConvertToDateTimeOffset(output)
+            : null;
+    }
+
+    private static string? GetUpdatedAuthor(string path)
+    {
+        var fullPath = Path.GetFullPath(path);
+        if (GitTimeCache.TryGetValue(fullPath, out var info))
+        {
+            return string.IsNullOrWhiteSpace(info.UpdatedAuthor) ? info.CreatedAuthor : info.UpdatedAuthor;
+        }
+
+        return ProcessHelper.RunCommand("git", @$"log -n 1 --format=%an -- ""{path}""", out string output)
+            ? output.Trim()
             : null;
     }
 

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,6 +28,16 @@ public class ProductGenerationTests
     {
         if (Directory.Exists(_root))
         {
+            foreach (var file in Directory.EnumerateFiles(_root, "*", SearchOption.AllDirectories))
+            {
+                File.SetAttributes(file, FileAttributes.Normal);
+            }
+
+            foreach (var directory in Directory.EnumerateDirectories(_root, "*", SearchOption.AllDirectories))
+            {
+                new DirectoryInfo(directory).Attributes = FileAttributes.Normal;
+            }
+
             Directory.Delete(_root, true);
         }
     }
@@ -147,6 +158,32 @@ public class ProductGenerationTests
     }
 
     [TestMethod]
+    public void Build_UsesGitAuthorInBlogAndDocDetails()
+    {
+        var configPath = CreateFixture();
+        RunGit(_root, "init");
+        RunGit(_root, "config", "user.name", "Commit Author");
+        RunGit(_root, "config", "user.email", "author@example.test");
+        RunGit(_root, "add", ".");
+        RunGit(_root, "commit", "-m", "Add test content");
+
+        Command.Build(configPath);
+
+        var blogPage = File.ReadAllText(Path.Combine(_output, "blogs", "Welcome.html"));
+        StringAssert.Contains(blogPage, "class=\"site-nav\"");
+        StringAssert.Contains(blogPage, "href=\"/test-site/docs/MyDocs.html\"");
+        StringAssert.Contains(blogPage, "👨‍💻 Commit Author");
+        StringAssert.Contains(blogPage, "📆");
+
+        var docsPage = File.ReadAllText(Path.Combine(_output, "docs", "MyDocs", "en-us", "1.0", "README.html"));
+        StringAssert.Contains(docsPage, "👨‍💻 Commit Author");
+        StringAssert.Contains(docsPage, "📆");
+
+        var blogData = File.ReadAllText(Path.Combine(_output, "data", "blogs.json"));
+        StringAssert.Contains(blogData, "\"AuthorName\": \"Commit Author\"");
+    }
+
+    [TestMethod]
     public void Build_RejectsBothAboutFilenameVariants()
     {
         if (OperatingSystem.IsWindows())
@@ -226,5 +263,30 @@ public class ProductGenerationTests
     {
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         File.WriteAllText(path, content, new UTF8Encoding(false));
+    }
+
+    private static void RunGit(string workingDirectory, params string[] arguments)
+    {
+        using var process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "git",
+                WorkingDirectory = workingDirectory,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            }
+        };
+
+        foreach (var argument in arguments)
+        {
+            process.StartInfo.ArgumentList.Add(argument);
+        }
+
+        Assert.IsTrue(process.Start());
+        process.WaitForExit();
+        var error = process.StandardError.ReadToEnd();
+        Assert.AreEqual(0, process.ExitCode, $"git {string.Join(' ', arguments)} failed: {error}");
     }
 }

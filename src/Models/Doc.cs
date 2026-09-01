@@ -36,5 +36,11 @@ public class Doc
     /// 更新时间
     /// </summary>
     public DateTimeOffset? UpdatedTime { get; set; }
+
+    /// <summary>
+    /// 最近一次提交作者
+    /// </summary>
+    public string AuthorName { get; set; } = string.Empty;
+
     public Catalog? Catalog { get; set; }
 }

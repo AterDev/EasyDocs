@@ -78,7 +78,7 @@
         </div>
         <div class="doc-main markdown-content">
           <div class="doc-header">
-            <div class="doc-meta">📆 @{UpdateTime}</div>
+            <div class="doc-meta">👨‍💻 @{DocAuthor} &nbsp;&nbsp; 📆 @{UpdateTime}</div>
             <div class="doc-toolbar">
               <button id="listNav" class="nav-toggle-btn doc-toolbar-btn" title="Navigation" aria-label="Open navigation menu">
                 <span>📑</span>

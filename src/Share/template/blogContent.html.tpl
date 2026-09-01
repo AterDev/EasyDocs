@@ -27,11 +27,24 @@
     @{ExtensionHead}
 </head>
 <body class="site-body">
+    <div class="site-header">
+        <div class="layout-container site-header-inner">
+            <div>
+                <a href="@{BaseUrl}" class="site-logo">@{Name}</a>
+            </div>
+            <div class="site-nav">
+                @{NavMenus}
+            </div>
+        </div>
+    </div>
     <div class="blog-detail-layout page-content">
         <aside class="blog-detail-sidebar">
         @{side}
         </aside>
         <main class="blog-detail-main markdown-content">
+        <div class="doc-header">
+            <div class="doc-meta">👨‍💻 @{DocAuthor} &nbsp;&nbsp; 📆 @{UpdateTime}</div>
+        </div>
         @{content}
         </main>
         <aside class="blog-detail-toc">
