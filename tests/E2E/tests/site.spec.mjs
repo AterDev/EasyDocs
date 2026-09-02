@@ -4,6 +4,7 @@ const baseHref = '/e2e/';
 const productEnglish = `${baseHref}products/MyProduct/en-us/Getting%20Started.html`;
 const productChinese = `${baseHref}products/MyProduct/zh-cn/Getting%20Started.html`;
 const productSearch = `${baseHref}products/MyProduct/en-us/search.html`;
+const docsHomepage = `${baseHref}docs/MyProduct.html`;
 
 test.describe('generated EasyDocs product site', () => {
   test('homepage exposes Docs and Products navigation', async ({ page }) => {
@@ -35,6 +36,45 @@ test.describe('generated EasyDocs product site', () => {
 
     await expect(page).toHaveURL(/\/products\/MyProduct\.html$/);
     await expect(page.locator('.doc-main')).toContainText('Welcome to MyProduct');
+  });
+
+  test('documentation homepage resolves local images and styles blockquotes in dark theme', async ({ page, request }) => {
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await page.goto(docsHomepage);
+
+    const quote = page.locator('blockquote');
+    await expect(quote).toContainText('A documented quote.');
+    await expect(quote.locator(':scope > p')).toHaveCount(2);
+
+    const quoteStyles = await quote.evaluate(element => {
+      const styles = getComputedStyle(element);
+      const paragraphStyles = getComputedStyle(element.querySelector(':scope > p'));
+      return {
+        backgroundColor: styles.backgroundColor,
+        borderLeftColor: styles.borderLeftColor,
+        borderLeftWidth: styles.borderLeftWidth,
+        color: styles.color,
+        paragraphColor: paragraphStyles.color
+      };
+    });
+    expect(quoteStyles.backgroundColor).toBe('rgb(30, 30, 30)');
+    expect(quoteStyles.borderLeftColor).toBe('rgb(64, 64, 64)');
+    expect(quoteStyles.borderLeftWidth).toBe('4px');
+    expect(quoteStyles.color).toBe('rgb(156, 163, 175)');
+    expect(quoteStyles.paragraphColor).toBe(quoteStyles.color);
+
+    const image = page.locator('img[alt="Architecture"]');
+    await expect(image).toHaveAttribute(
+      'src',
+      './MyProduct/en-us/1.0/assets/architecture.svg?version=1#diagram'
+    );
+    const imageSrc = await image.getAttribute('src');
+    if (!imageSrc) {
+      throw new Error('The documentation homepage image has no src.');
+    }
+
+    const imageResponse = await request.get(new URL(imageSrc, page.url()).toString());
+    expect(imageResponse.ok()).toBeTruthy();
   });
 
   test('English product documentation renders three columns and its navigation', async ({ page }) => {

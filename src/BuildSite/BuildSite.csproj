@@ -8,7 +8,7 @@
 		<ToolCommandName>ezdoc</ToolCommandName>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<PackageId>Ater.EasyDocs</PackageId>
-		<Version>2.3.4</Version>
+		<Version>2.3.5</Version>
 		<Description>Fast and lightweight static website generation tool!</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -19,7 +19,7 @@
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/AterDev/EasyDocs</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes>Render About without a sidebar and improve Mermaid contrast and Markdown table wrapping.</PackageReleaseNotes>
+		<PackageReleaseNotes>Rebase documentation homepage image paths and add dark-theme blockquote styling.</PackageReleaseNotes>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>

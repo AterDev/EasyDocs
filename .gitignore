@@ -4,13 +4,12 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # User-specific files
-WebSite/
-WebApp/blogs/
-WebApp/docs/
-WebApp/data/
-WebApp/products/
-WebApp/index.html
-WebApp/about.html
+WebSite/blogs/
+WebSite/docs/
+WebSite/data/
+WebSite/products/
+WebSite/index.html
+WebSite/about.html
 
 *.rsuser
 *.suo

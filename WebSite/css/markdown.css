@@ -466,6 +466,29 @@
     }
 }
 
+.markdown-content blockquote {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid var(--color-border);
+    border-radius: 0 0.375rem 0.375rem 0;
+    background-color: var(--color-surface);
+    color: var(--color-muted);
+}
+
+.markdown-content blockquote > p {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: inherit;
+}
+
+.markdown-content blockquote > p:first-child {
+    margin-top: 0;
+}
+
+.markdown-content blockquote > p:last-child {
+    margin-bottom: 0;
+}
+
 .markdown-content .hover\:bg-blue-600:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(37 99 235 / var(--tw-bg-opacity));

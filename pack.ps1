@@ -8,9 +8,9 @@ param (
 $location = Get-Location
 Write-Host 'Compressing files...'
 
-$filePaths = @('WebApp/css/app.css', 'WebApp/css/docs.css', 'WebApp/css/markdown.css', 'WebApp/css/keyboard_arrow_right.svg',
-    'WebApp/js/blogs.js', 'WebApp/js/docs.js', 'WebApp/js/index.js', 'WebApp/js/markdown.js', 'WebApp/js/products.js',
-    'WebApp/favicon.ico'
+$filePaths = @('WebSite/css/app.css', 'WebSite/css/docs.css', 'WebSite/css/markdown.css', 'WebSite/css/keyboard_arrow_right.svg',
+    'WebSite/js/blogs.js', 'WebSite/js/docs.js', 'WebSite/js/index.js', 'WebSite/js/markdown.js', 'WebSite/js/products.js',
+    'WebSite/favicon.ico'
 )
 
 $zipFilePath = Join-Path $location './src/Share/template/web.zip'
@@ -24,7 +24,7 @@ if (Test-Path $zipFilePath) {
 $tempDir = New-Item -ItemType Directory -Path (Join-Path $location 'temp_zip') -Force
 try {
     foreach ($filePath in $filePaths) {
-        $destName = $filePath.Replace('WebApp/', '')
+        $destName = $filePath.Replace('WebSite/', '')
         $tempFilePath = Join-Path $tempDir $destName
         $sourceFilePath = Join-Path $location $filePath
         # Ensure the destination directory exists

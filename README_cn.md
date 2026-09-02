@@ -175,17 +175,17 @@ Content/docs/EasyDoc/zh-cn/2.0/
 
 博客和文档中的本地图片会在生成时复制。目前支持复制的扩展名是 `.jpg`、`.jpeg`、`.png`、`.gif` 和 `.svg`，建议使用小写扩展名。图片应放在对应的内容目录下；远程 `http://` 或 `https://` 图片地址会直接保留，不会复制到输出目录。
 
-版本化文档页支持正确的相对图片路径。不过，生成的文档入口页 `docs/<文档名>.html` 使用该文档的第一篇内容，当前构建器只会改写以 `./_images` 开头的入口页图片路径。如果图片还需要在文档入口页显示，请使用以下约定：
+版本化文档页和生成的文档入口页都支持相对图片路径。文档入口页 `docs/<文档名>.html` 使用该文档的第一篇内容；对于入口页中的本地图片，构建器会先按照源 Markdown 文件的位置解析，再计算相对于入口页的输出路径，因此不要求使用 `./_images` 或其他特定目录：
 
 ```text
 Content/docs/EasyDoc/zh-cn/2.0/
 ├── 快速开始.md
-└── _images/
+└── assets/
     └── architecture.png
 ```
 
 ```markdown
-![架构图](./_images/architecture.png)
+![架构图](assets/architecture.png)
 ```
 
 ### 🔨生成静态站点

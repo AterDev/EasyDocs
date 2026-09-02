@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Markdig;
 using Markdig.Extensions.AutoIdentifiers;
 using Share.MarkdownExtension;
@@ -14,6 +15,10 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
     private string? _gitRoot;
     private string? _repoUrl;
     private string? _branch;
+    private static readonly string[] SupportedImageExtensions = [".jpg", ".png", ".jpeg", ".gif", ".svg"];
+    private static readonly Regex ImageSourceRegex = new(
+        @"(?<prefix><img\b[^>]*?\bsrc\s*=\s*[""'])(?<url>[^""']+)(?<suffix>[""'])",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
         WriteIndented = true
@@ -151,7 +156,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                             var homepagePath = Path.Combine(outputDocPath, $"{docInfo.Name}.html");
 
                             var homepageCanonical = BuildCanonicalUrl($"docs/{docInfo.Name}.html");
-                            htmlContent = htmlContent.Replace("src=\"./_images", $"src=\"./{docInfo.Name}/{language}/{version}/_images")
+                            htmlContent = RewriteHomepageImagePaths(htmlContent, doc, homepagePath)
                                 .Replace(canonicalUrl, homepageCanonical);
                             docHomepages[docInfo.Name] = new GenFile
                             {
@@ -174,11 +179,10 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                     List<string> otherFiles = Directory.EnumerateFiles(docPath, "*", SearchOption.AllDirectories)
                         .Where(f => !f.EndsWith(".md"))
                         .ToList();
-                    string[] extensions = [".jpg", ".png", ".jpeg", ".gif", ".svg"];
                     foreach (var file in otherFiles)
                     {
                         var extension = Path.GetExtension(file);
-                        if (!extensions.Contains(extension)) { continue; }
+                        if (!SupportedImageExtensions.Contains(extension)) { continue; }
 
                         string relativePath = file.Replace(ContentPath, Output);
                         string? dir = Path.GetDirectoryName(relativePath);
@@ -210,6 +214,97 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             File.WriteAllText(homepage.Path, homepage.Content);
             Command.LogSuccess($"Generate doc homepage: {homepage.Path}");
         }
+    }
+
+    private string RewriteHomepageImagePaths(string htmlContent, Doc doc, string homepagePath)
+    {
+        var contentRoot = Path.GetFullPath(ContentPath);
+        var sourceDirectory = Path.GetDirectoryName(Path.GetFullPath(doc.Path));
+        var homepageDirectory = Path.GetDirectoryName(Path.GetFullPath(homepagePath));
+        if (sourceDirectory == null || homepageDirectory == null)
+        {
+            return htmlContent;
+        }
+
+        return ImageSourceRegex.Replace(htmlContent, match =>
+        {
+            var imageUrl = match.Groups["url"].Value;
+            var rewrittenUrl = GetHomepageImageUrl(
+                imageUrl,
+                sourceDirectory,
+                contentRoot,
+                homepageDirectory);
+
+            return rewrittenUrl == null
+                ? match.Value
+                : match.Groups["prefix"].Value + rewrittenUrl + match.Groups["suffix"].Value;
+        });
+    }
+
+    private string? GetHomepageImageUrl(
+        string imageUrl,
+        string sourceDirectory,
+        string contentRoot,
+        string homepageDirectory)
+    {
+        var separatorIndex = imageUrl.IndexOfAny(['?', '#']);
+        var imagePath = separatorIndex >= 0 ? imageUrl[..separatorIndex] : imageUrl;
+        if (string.IsNullOrWhiteSpace(imagePath))
+        {
+            return null;
+        }
+
+        var decodedImagePath = System.Net.WebUtility.HtmlDecode(imagePath).Trim();
+        if (IsNonRelativeUrl(decodedImagePath) || Path.IsPathRooted(decodedImagePath))
+        {
+            return null;
+        }
+
+        try
+        {
+            decodedImagePath = Uri.UnescapeDataString(decodedImagePath);
+        }
+        catch (UriFormatException)
+        {
+            return null;
+        }
+
+        var sourceImagePath = Path.GetFullPath(Path.Combine(
+            sourceDirectory,
+            decodedImagePath.Replace('/', Path.DirectorySeparatorChar)));
+        if (!IsPathWithin(sourceImagePath, contentRoot) ||
+            !File.Exists(sourceImagePath) ||
+            !SupportedImageExtensions.Contains(Path.GetExtension(sourceImagePath)))
+        {
+            return null;
+        }
+
+        var outputImagePath = Path.Combine(
+            Path.GetFullPath(Output),
+            Path.GetRelativePath(contentRoot, sourceImagePath));
+        var relativeImagePath = Path.GetRelativePath(homepageDirectory, outputImagePath)
+            .Replace('\\', '/');
+        if (!relativeImagePath.StartsWith(".", StringComparison.Ordinal))
+        {
+            relativeImagePath = "./" + relativeImagePath;
+        }
+
+        return relativeImagePath + (separatorIndex >= 0 ? imageUrl[separatorIndex..] : string.Empty);
+    }
+
+    private static bool IsNonRelativeUrl(string url)
+    {
+        return url.StartsWith("/", StringComparison.Ordinal) ||
+            Uri.TryCreate(url, UriKind.Absolute, out _);
+    }
+
+    private static bool IsPathWithin(string path, string root)
+    {
+        var relativePath = Path.GetRelativePath(root, path);
+        return !Path.IsPathRooted(relativePath) &&
+            !relativePath.Equals("..", StringComparison.Ordinal) &&
+            !relativePath.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) &&
+            !relativePath.StartsWith(".." + Path.AltDirectorySeparatorChar, StringComparison.Ordinal);
     }
 
     private void BuildDocSearchData(DocInfo docInfo, string language, string version, List<Doc> docs)

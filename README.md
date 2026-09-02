@@ -157,7 +157,7 @@ Content/
 - Documentation uses `docs/<name>/<language>/<version>/...`. The directory names must be declared in `DocInfos`.
 - Products use `products/<name>/<language>/...`. The first Markdown file in the default language is used for the product landing page at `products/<name>.html`.
 - A `.order` file controls the order of files or directories at that level. Entries use names without the `.md` suffix.
-- Image files in blogs and docs are copied while the site is generated. There is no required directory name such as `images`; put the image beside the Markdown file or in a subdirectory and reference it with the correct relative path. The currently copied local image extensions are `.jpg`, `.jpeg`, `.png`, `.gif`, and `.svg`. For an image in the generated documentation homepage, use the `./_images/...` convention described below.
+- Image files in blogs and docs are copied while the site is generated. There is no required directory name such as `images`; put the image beside the Markdown file or in a subdirectory and reference it with the correct relative path. The currently copied local image extensions are `.jpg`, `.jpeg`, `.png`, `.gif`, and `.svg`. Local image references in the generated documentation homepage are resolved from the first Markdown file and rewritten relative to the homepage.
 - Relative Markdown links to `.md` files are converted to `.html`; absolute HTTP(S) links are preserved.
 - Non-Markdown files under a product directory are copied unchanged. For example, `Content/products/MyProduct/privacy-policy.html` remains available at `products/MyProduct/privacy-policy.html`.
 
@@ -182,17 +182,17 @@ Both of these references are valid when the files exist at the referenced paths:
 
 For local images in blogs and documentation, keep the file under the corresponding content tree and use one of the supported extensions listed above. Remote `http://` and `https://` image URLs are kept as-is and are not copied.
 
-Versioned documentation pages support any matching relative image path. The generated documentation homepage at `docs/<name>.html` is based on the first document, and the current builder rewrites homepage image references only when they start with `./_images`. If that image must also appear on the documentation homepage, use this convention:
+Versioned documentation pages and the generated documentation homepage support relative image paths. The homepage at `docs/<name>.html` is based on the first document; its local image references are resolved relative to the source Markdown file and rewritten relative to the homepage, so no special image directory is required:
 
 ```text
 Content/docs/EasyDoc/en-us/2.0/
 ├── Quick-Start.md
-└── _images/
+└── assets/
     └── architecture.png
 ```
 
 ```markdown
-![Architecture](./_images/architecture.png)
+![Architecture](assets/architecture.png)
 ```
 
 ## Custom styles and static files
