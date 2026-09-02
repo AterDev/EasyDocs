@@ -2,7 +2,7 @@
 
 作者的官方博客地址： [https://dusi.dev](https://www.dusi.dev)
 
-![show](images/show.png)
+![show](../images/show.png)
 
 ## Markdown样式内容
 
@@ -83,6 +83,8 @@ namespace MyBlog
 | iMac | $1999 | 1 |
 
 ## 引用内容
+
+> 这是普通的引用
 
 > [!NOTE]
 > Information the user should notice even if skimming
