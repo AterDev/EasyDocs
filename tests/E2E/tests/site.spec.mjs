@@ -46,6 +46,25 @@ test.describe('generated EasyDocs product site', () => {
     await expect(page.locator('.doc-toc')).toBeVisible();
     await expect(page.locator('.doc-sidebar')).toContainText('Getting Started');
     await expect(page.locator('.doc-main')).toContainText('Welcome to MyProduct');
+
+    const descriptionCell = page.locator('td').filter({ hasText: 'deliberately long table cell' });
+    await expect(descriptionCell).toBeVisible();
+    const tableTextLayout = await descriptionCell.evaluate(cell => {
+      const range = document.createRange();
+      range.selectNodeContents(cell);
+      const cellRect = cell.getBoundingClientRect();
+      const textRect = range.getBoundingClientRect();
+      const lineTops = [...range.getClientRects()].map(rect => Math.round(rect.top));
+
+      return {
+        whiteSpace: getComputedStyle(cell).whiteSpace,
+        lineCount: new Set(lineTops).size,
+        staysInsideCell: textRect.right <= cellRect.right + 1
+      };
+    });
+    expect(tableTextLayout.whiteSpace).toBe('normal');
+    expect(tableTextLayout.lineCount).toBeGreaterThan(1);
+    expect(tableTextLayout.staysInsideCell).toBeTruthy();
   });
 
   test('language switch changes the product documentation language', async ({ page }) => {
@@ -88,6 +107,9 @@ test.describe('generated EasyDocs product site', () => {
 
     await page.goto(`${baseHref}about.html`);
     await expect(page.locator('body')).toContainText('About EasyDocs E2E');
+    await expect(page.locator('.about-layout')).toBeVisible();
+    await expect(page.locator('.about-main')).toContainText('About EasyDocs E2E');
+    await expect(page.locator('.blog-detail-sidebar')).toHaveCount(0);
   });
 
   test('honors BaseHref for document metadata and assets', async ({ page }) => {

@@ -693,3 +693,67 @@ ul.toc {
         padding: 0;
     }
 }
+
+/* About is a standalone page and does not use the blog navigation column. */
+.about-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 0;
+    width: 100%;
+    min-height: calc(100vh - 48px);
+    padding: 0;
+}
+
+.about-main {
+    width: min(100%, 900px);
+    justify-self: center;
+    padding: 0 36px;
+}
+
+.about-toc {
+    align-self: start;
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding-left: 28px;
+}
+
+.about-toc .toc-title {
+    color: var(--color-header-text);
+    margin-bottom: 14px;
+}
+
+.about-toc .toc li {
+    margin: 7px 0;
+}
+
+.about-toc .toc a {
+    color: var(--color-muted);
+    font-size: 14px;
+}
+
+.about-toc .toc a:hover {
+    color: var(--color-primary);
+}
+
+@media (max-width: 1024px) {
+    .about-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .about-toc {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-layout {
+        display: block;
+        padding: 0 16px 72px;
+    }
+
+    .about-main {
+        padding: 0;
+    }
+}

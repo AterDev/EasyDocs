@@ -193,7 +193,11 @@ public class HtmlBuilder : BaseBuilder
     /// <param name="dirPath"></param>
     /// <param name="pipeline"></param>
     /// <returns></returns>
-    private string ConvertMarkdownToHtml(string dirPath, MarkdownPipeline pipeline, string? outputRelativePath = null)
+    private string ConvertMarkdownToHtml(
+        string dirPath,
+        MarkdownPipeline pipeline,
+        string? outputRelativePath = null,
+        string templateName = "blogContent.html")
     {
         string markdown = File.ReadAllText(dirPath);
         string html = Markdown.ToHtml(markdown, pipeline);
@@ -208,7 +212,7 @@ public class HtmlBuilder : BaseBuilder
         var relativePath = outputRelativePath ?? GetRelativeHtmlPath(dirPath);
         var canonicalUrl = BuildCanonicalUrl(relativePath);
 
-        var tplContent = TemplateHelper.GetTplContent("blogContent.html");
+        var tplContent = TemplateHelper.GetTplContent(templateName);
         tplContent = tplContent.Replace("@{Title}", title)
             .Replace("@{Description}", WebInfo.Description)
             .Replace("@{Keywords}", GetPageKeywords(title))
@@ -407,7 +411,11 @@ public class HtmlBuilder : BaseBuilder
             return;
         }
 
-        var html = ConvertMarkdownToHtml(aboutPath, CreateMarkdownPipeline(), "about.html");
+        var html = ConvertMarkdownToHtml(
+            aboutPath,
+            CreateMarkdownPipeline(),
+            outputRelativePath: "about.html",
+            templateName: "aboutContent.html");
         var outputPath = Path.Combine(Output, "about.html");
         Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
         File.WriteAllText(outputPath, html, Encoding.UTF8);

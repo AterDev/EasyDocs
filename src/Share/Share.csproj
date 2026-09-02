@@ -6,6 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="template\aboutContent.html.tpl" />
 		<None Remove="template\blogs.html.tpl" />
 		<None Remove="template\docs.html.tpl" />
 		<None Remove="template\docsSearch.html.tpl" />
@@ -16,6 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="template\aboutContent.html.tpl" />
 		<EmbeddedResource Include="template\docs.html.tpl" />
 		<EmbeddedResource Include="template\docsSearch.html.tpl" />
 		<EmbeddedResource Include="template\blogContent.html.tpl" />

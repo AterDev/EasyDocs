@@ -157,7 +157,13 @@
     display: table;
     width: 100%;
     table-layout: fixed;
-    white-space: nowrap;
+}
+
+.markdown-content table th,
+.markdown-content table td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -197,7 +203,6 @@
 }
 
 .markdown-content table td {
-    white-space: nowrap;
     border-bottom-width: 1px;
     --tw-border-opacity: 1;
     border-color: rgb(229 231 235 / var(--tw-border-opacity));
@@ -827,4 +832,27 @@
     font: inherit;
     line-height: inherit;
     white-space: inherit;
+}
+
+/* Mermaid's default SVG colors are too dark for the dark markdown theme. */
+.markdown-content pre>svg>.messageText,
+.markdown-content pre>svg .messageText {
+    fill: #374151 !important;
+}
+
+.markdown-content pre>svg line,
+.markdown-content pre>svg path {
+    stroke: #374151 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    .markdown-content pre>svg>.messageText,
+    .markdown-content pre>svg .messageText {
+        fill: #d4d4d4 !important;
+    }
+
+    .markdown-content pre>svg line,
+    .markdown-content pre>svg path {
+        stroke: #d4d4d4 !important;
+    }
 }

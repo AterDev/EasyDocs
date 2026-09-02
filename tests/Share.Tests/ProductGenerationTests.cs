@@ -114,6 +114,20 @@ public class ProductGenerationTests
     }
 
     [TestMethod]
+    public void Build_RendersAboutWithoutBlogSidebar()
+    {
+        var configPath = CreateFixture();
+
+        Command.Build(configPath);
+
+        var about = File.ReadAllText(Path.Combine(_output, "about.html"));
+        StringAssert.Contains(about, "class=\"about-layout page-content\"");
+        StringAssert.Contains(about, "class=\"about-main markdown-content\"");
+        Assert.IsFalse(about.Contains("blog-detail-sidebar", StringComparison.Ordinal));
+        Assert.IsFalse(about.Contains("class=\"doc-sidebar\"", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
     public void Build_UsesRootBaseHrefForDocsAndProducts()
     {
         var configPath = CreateFixture(baseHref: "/");
