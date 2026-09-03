@@ -91,19 +91,19 @@ configuration or commands.
 
 ## 4. Commit, publish, and return
 
-Review the complete diff, then stage only the approved release changes. Use a
-conventional commit message with the repository's emoji convention, for
+Review the complete diff, then stage all uncommitted changes. Use a
+conventional commit message(summary changes) with the repository's emoji convention, for
 example:
 
 ```text
-🔖 chore(release): prepare 2.3.7
+🔖 release(2.3.7): <summary changes>
 ```
 
 Commit and push the source branch:
 
 ```powershell
 git add <approved release paths>
-git commit -m "🔖 chore(release): prepare <version>"
+git commit -m "🔖 release(2.3.7): summary changes"
 git push origin $releaseStartBranch
 ```
 

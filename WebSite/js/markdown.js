@@ -1,9 +1,16 @@
+const mermaidSources = [
+    'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js',
+    'https://registry.npmmirror.com/mermaid/10.9.0/files/dist/mermaid.min.js'
+];
+const mermaidLoadTimeoutMilliseconds = 5000;
+
 class MarkdownHandler {
     copyContent = '&#128203;copy code';
     mermaidMinScale = 0.2;
     mermaidMaxScale = 4;
     mermaidZoomFactor = 1.2;
     initialized = false;
+    mermaidLoadPromise = null;
 
     constructor() {
         const initialize = () => {
@@ -32,17 +39,91 @@ class MarkdownHandler {
         const mermaidElements = [...document.querySelectorAll('pre.mermaid')]
             .filter(mermaidElement => !mermaidElement.hasAttribute('data-processed'));
 
-        const mermaid = window.mermaid;
-        if (mermaid && mermaidElements.length > 0 && typeof mermaid.initialize === 'function') {
-            mermaid.initialize({ startOnLoad: false });
-            const render = typeof mermaid.run === 'function'
-                ? mermaid.run({ nodes: Array.from(mermaidElements) })
-                : typeof mermaid.init === 'function'
-                    ? mermaid.init(undefined, mermaidElements)
-                    : null;
-            if (render && typeof render.catch === 'function') {
-                render.catch(error => console.error('Failed to render Mermaid chart:', error));
+        if (mermaidElements.length === 0) {
+            return;
+        }
+
+        this.loadMermaid()
+            .then(mermaid => this.renderMermaid(mermaid, mermaidElements))
+            .catch(error => console.error('Failed to load Mermaid:', error));
+    }
+    loadMermaid() {
+        if (window.mermaid) {
+            return Promise.resolve(window.mermaid);
+        }
+        if (!this.mermaidLoadPromise) {
+            this.mermaidLoadPromise = this.loadMermaidFromSources();
+        }
+        return this.mermaidLoadPromise;
+    }
+    async loadMermaidFromSources() {
+        for (const source of mermaidSources) {
+            try {
+                await this.loadMermaidSource(source);
+                if (window.mermaid) {
+                    return window.mermaid;
+                }
+
+                throw new Error('The script did not expose window.mermaid.');
+            } catch (error) {
+                console.warn(`Failed to load Mermaid from ${source}:`, error);
             }
+        }
+
+        throw new Error('No Mermaid source could be loaded.');
+    }
+    loadMermaidSource(source) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            let settled = false;
+            let timeoutId;
+            const cleanup = () => {
+                window.clearTimeout(timeoutId);
+                script.onload = null;
+                script.onerror = null;
+            };
+            const fail = error => {
+                if (settled) {
+                    return;
+                }
+
+                settled = true;
+                cleanup();
+                script.remove();
+                reject(error);
+            };
+
+            timeoutId = window.setTimeout(
+                () => fail(new Error(`Timed out after ${mermaidLoadTimeoutMilliseconds}ms.`)),
+                mermaidLoadTimeoutMilliseconds);
+            script.onload = () => {
+                if (settled) {
+                    return;
+                }
+
+                settled = true;
+                cleanup();
+                resolve();
+            };
+            script.onerror = () => fail(new Error('The script request failed.'));
+            script.async = true;
+            script.src = source;
+            document.head.appendChild(script);
+        });
+    }
+    renderMermaid(mermaid, mermaidElements) {
+        if (!mermaid || typeof mermaid.initialize !== 'function') {
+            throw new Error('The loaded Mermaid script has an unsupported API.');
+        }
+
+        mermaid.initialize({ startOnLoad: false });
+        const render = typeof mermaid.run === 'function'
+            ? mermaid.run({ nodes: Array.from(mermaidElements) })
+            : typeof mermaid.init === 'function'
+                ? mermaid.init(undefined, mermaidElements)
+                : null;
+        if (render && typeof render.catch === 'function') {
+            render.catch(error => console.error('Failed to render Mermaid chart:', error));
         }
     }
     addMermaidViewer(mermaidBlock) {

@@ -7,6 +7,10 @@ const productSearch = `${baseHref}products/MyProduct/en-us/search.html`;
 const docsHomepage = `${baseHref}docs/MyProduct.html`;
 const docsDetail = `${baseHref}docs/MyProduct/en-us/1.0/Overview.html`;
 const blogDetail = `${baseHref}blogs/Welcome.html`;
+const mermaidSources = {
+  primary: 'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js',
+  fallback: 'https://registry.npmmirror.com/mermaid/10.9.0/files/dist/mermaid.min.js'
+};
 
 test.describe('generated EasyDocs product site', () => {
   test('homepage exposes Docs and Products navigation', async ({ page }) => {
@@ -168,22 +172,7 @@ test.describe('generated EasyDocs product site', () => {
     );
   });
   test('enables Mermaid controls on documentation and blog detail pages', async ({ page }) => {
-    await page.route(
-      'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js',
-      route => route.fulfill({
-        contentType: 'text/javascript',
-        body: `window.mermaid = {
-          initialize() {},
-          run({ nodes }) {
-            nodes.forEach(node => {
-              node.innerHTML = '<svg viewBox="0 0 1000 500" aria-label="test chart"></svg>';
-              node.setAttribute('data-processed', 'true');
-            });
-            return Promise.resolve();
-          }
-        };`
-      })
-    );
+    await mockMermaid(page);
 
     for (const detailPage of [docsDetail, blogDetail]) {
       await page.goto(detailPage);
@@ -217,6 +206,14 @@ test.describe('generated EasyDocs product site', () => {
       await expect(page.locator('.mermaid-preview')).toHaveCount(0);
     }
   });
+  test('falls back to the secondary Mermaid source when the primary source fails', async ({ page }) => {
+    await mockMermaid(page, { failPrimary: true });
+
+    await page.goto(docsDetail);
+
+    await expect(page.locator('.mermaid-viewer')).toHaveCount(1);
+    await expect(page.locator('.mermaid-stage svg')).toBeVisible();
+  });
 
   test('desktop documentation version selector navigates and stays selected', async ({ page }) => {
     await page.goto(docsDetail);
@@ -236,3 +233,31 @@ test.describe('generated EasyDocs product site', () => {
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
+
+async function mockMermaid(page, { failPrimary = false } = {}) {
+  await page.route(mermaidSources.primary, route => {
+    if (failPrimary) {
+      return route.abort();
+    }
+
+    return route.fulfill({
+      contentType: 'text/javascript',
+      body: mermaidMockBody
+    });
+  });
+  await page.route(mermaidSources.fallback, route => route.fulfill({
+    contentType: 'text/javascript',
+    body: mermaidMockBody
+  }));
+}
+
+const mermaidMockBody = `window.mermaid = {
+  initialize() {},
+  run({ nodes }) {
+    nodes.forEach(node => {
+      node.innerHTML = '<svg viewBox="0 0 1000 500" aria-label="test chart"></svg>';
+      node.setAttribute('data-processed', 'true');
+    });
+    return Promise.resolve();
+  }
+};`;

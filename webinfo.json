@@ -6,6 +6,7 @@
   "BaseHref": "/",
   "ContetPath": "./Content",
   "OutputPath": "./WebSite",
+  "FooterText": "",
   "Domain": "https://aterdev.github.io/",
   "DocInfos": [
     {

@@ -245,10 +245,6 @@ public partial class BaseBuilder
     protected string GetExtensionScript(string content)
     {
         string extensionHead = "";
-        if (content.Contains("class=\"mermaid\""))
-        {
-            extensionHead += "<script src=\"https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js\"></script>" + Environment.NewLine;
-        }
         if (content.Contains("class=\"math\""))
         {
             extensionHead += """
