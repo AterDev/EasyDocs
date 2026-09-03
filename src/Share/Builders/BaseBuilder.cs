@@ -83,6 +83,52 @@ public partial class BaseBuilder
         return BaseUrl.TrimEnd('/') + "/" + normalized;
     }
 
+    /// <summary>
+    /// 规范化仓库网页地址，避免将 Git remote 中的凭据写入生成的站点。
+    /// </summary>
+    protected static string? NormalizeRepositoryUrl(string? repositoryUrl)
+    {
+        if (string.IsNullOrWhiteSpace(repositoryUrl))
+        {
+            return null;
+        }
+
+        var normalized = repositoryUrl.Trim();
+        if (normalized.StartsWith("git@", StringComparison.OrdinalIgnoreCase))
+        {
+            var separator = normalized.IndexOf(':', 4);
+            if (separator <= 4 || separator == normalized.Length - 1)
+            {
+                return null;
+            }
+
+            normalized = $"https://{normalized[4..separator]}/{normalized[(separator + 1)..]}";
+        }
+
+        if (!Uri.TryCreate(normalized, UriKind.Absolute, out var uri) ||
+            string.IsNullOrWhiteSpace(uri.Host))
+        {
+            return null;
+        }
+
+        var builder = new UriBuilder(uri)
+        {
+            UserName = string.Empty,
+            Password = string.Empty,
+            Query = string.Empty,
+            Fragment = string.Empty
+        };
+
+        var path = builder.Path.TrimEnd('/');
+        if (path.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
+        {
+            path = path[..^4].TrimEnd('/');
+        }
+
+        builder.Path = path;
+        return builder.Uri.GetLeftPart(UriPartial.Path).TrimEnd('/');
+    }
+
     protected string GetPageKeywords(string? title = null)
     {
         if (!string.IsNullOrWhiteSpace(WebInfo?.Keywords))

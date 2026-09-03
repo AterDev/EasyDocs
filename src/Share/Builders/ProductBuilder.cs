@@ -202,7 +202,7 @@ public class ProductBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             .Replace("@{Language}", language)
             .Replace("@{TopActions}", BuildProductTopActions(languages))
             .Replace("@{UpdateTime}", (doc.UpdatedTime ?? doc.CreatedTime).ToString("yyyy-MM-dd HH:mm"))
-            .Replace("@{GithubLink}", GetGithubLink(doc.Path))
+            .Replace("@{EditLink}", GetEditLink(doc.Path))
             .Replace("@{NavMenus}", BuildNavigations(ContentPath));
     }
 
@@ -300,7 +300,7 @@ public class ProductBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
 
     private void InitGitInfo()
     {
-        _repoUrl = WebInfo.RepositoryUrl;
+        _repoUrl = NormalizeRepositoryUrl(WebInfo.RepositoryUrl);
         _branch = WebInfo.Branch;
 
         if (ProcessHelper.RunCommand("git", "rev-parse --show-toplevel", out var gitRoot))
@@ -311,15 +311,7 @@ public class ProductBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         if (string.IsNullOrWhiteSpace(_repoUrl) && ProcessHelper.RunCommand("git", "remote get-url origin", out var remoteUrl))
         {
             remoteUrl = remoteUrl.Trim();
-            if (remoteUrl.StartsWith("git@", StringComparison.OrdinalIgnoreCase))
-            {
-                remoteUrl = remoteUrl.Replace(":", "/").Replace("git@", "https://");
-            }
-            if (remoteUrl.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
-            {
-                remoteUrl = remoteUrl[..^4];
-            }
-            _repoUrl = remoteUrl;
+            _repoUrl = NormalizeRepositoryUrl(remoteUrl);
         }
 
         if (string.IsNullOrWhiteSpace(_branch) && ProcessHelper.RunCommand("git", "branch --show-current", out var branch))
@@ -328,7 +320,7 @@ public class ProductBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         }
     }
 
-    private string GetGithubLink(string filePath)
+    private string GetEditLink(string filePath)
     {
         if (string.IsNullOrWhiteSpace(_repoUrl) || string.IsNullOrWhiteSpace(_gitRoot))
         {

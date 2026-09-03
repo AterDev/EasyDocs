@@ -64,6 +64,8 @@ public class DocsGenerationTests
             "Guide.html"));
         StringAssert.Contains(document, "src=\"../assets/root.svg?version=1#diagram\"");
         StringAssert.Contains(document, "src=\"../../shared.svg\"");
+        StringAssert.Contains(document, "title=\"Edit\"");
+        Assert.IsFalse(document.Contains("Edit on GitHub", StringComparison.Ordinal));
 
         Assert.IsTrue(File.Exists(Path.Combine(_output, "docs", "MyDocs", "en-us", "1.0", "assets", "root.svg")));
         Assert.IsTrue(File.Exists(Path.Combine(_output, "docs", "MyDocs", "en-us", "shared.svg")));

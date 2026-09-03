@@ -113,7 +113,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                         var toc = GetContentTOC(markdown) ?? "";
                         var extensionScript = GetExtensionScript(docContent);
                         var updateTimeStr = (doc.UpdatedTime ?? doc.CreatedTime).ToString("yyyy-MM-dd HH:mm");
-                        var githubLink = GetGithubLink(doc.Path);
+                        var editLink = GetEditLink(doc.Path);
 
                         var canonicalUrl = BuildCanonicalUrl($"docs/{doc.HtmlPath}");
                         var htmlContent = tplContent.Replace("@{BaseUrl}", BaseUrl)
@@ -134,7 +134,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
                             .Replace("@{Version}", version)
                             .Replace("@{UpdateTime}", updateTimeStr)
                             .Replace("@{DocAuthor}", System.Net.WebUtility.HtmlEncode(doc.AuthorName))
-                            .Replace("@{GithubLink}", githubLink);
+                            .Replace("@{EditLink}", editLink);
 
                         var outputFilePath = Path.Combine(outputDocPath, doc.HtmlPath);
 
@@ -375,7 +375,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
     private void InitGitInfo()
     {
         // 优先使用配置
-        _repoUrl = WebInfo.RepositoryUrl;
+        _repoUrl = NormalizeRepositoryUrl(WebInfo.RepositoryUrl);
         _branch = WebInfo.Branch;
 
         // 获取 Git 根目录
@@ -390,16 +390,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
             if (ProcessHelper.RunCommand("git", "remote get-url origin", out string remoteUrl))
             {
                 remoteUrl = remoteUrl.Trim();
-                // 处理 SSH 格式 git@github.com:User/Repo.git -> https://github.com/User/Repo
-                if (remoteUrl.StartsWith("git@"))
-                {
-                    remoteUrl = remoteUrl.Replace(":", "/").Replace("git@", "https://");
-                }
-                if (remoteUrl.EndsWith(".git"))
-                {
-                    remoteUrl = remoteUrl[..^4];
-                }
-                _repoUrl = remoteUrl;
+                _repoUrl = NormalizeRepositoryUrl(remoteUrl);
             }
         }
 
@@ -413,7 +404,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         }
     }
 
-    private string GetGithubLink(string filePath)
+    private string GetEditLink(string filePath)
     {
         if (string.IsNullOrEmpty(_repoUrl) || string.IsNullOrEmpty(_gitRoot))
         {

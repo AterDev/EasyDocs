@@ -83,7 +83,7 @@
               <button id="listNav" class="nav-toggle-btn doc-toolbar-btn" title="Navigation" aria-label="Open navigation menu">
                 <span>📑</span>
               </button>
-              <a href="@{GithubLink}" target="_blank" rel="noopener noreferrer" class="doc-toolbar-link" title="Edit on GitHub">
+              <a href="@{EditLink}" target="_blank" rel="noopener noreferrer" class="doc-toolbar-link" title="Edit">
                 <span>🖋️</span>
               </a>
             </div>

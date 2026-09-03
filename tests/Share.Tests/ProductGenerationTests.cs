@@ -67,6 +67,8 @@ public class ProductGenerationTests
         StringAssert.Contains(page, "Welcome to MyProduct");
         StringAssert.Contains(page, "products.js");
         StringAssert.Contains(page, "data-productName=\"MyProduct\"");
+        StringAssert.Contains(page, "title=\"Edit\"");
+        Assert.IsFalse(page.Contains("Edit on GitHub", StringComparison.Ordinal));
         StringAssert.Contains(page, "/test-site/docs/MyDocs.html");
         StringAssert.Contains(page, "/test-site/products/MyProduct.html");
         var releaseNotesIndex = page.IndexOf("href=\"/test-site/products/MyProduct/en-us/Release Notes.html", StringComparison.Ordinal);
