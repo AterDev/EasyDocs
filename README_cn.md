@@ -78,6 +78,7 @@ dotnet run .\preview.cs -- .\WebSite
   "Name": "Niltor Blog", // 博客名称，显示在主页顶部导航
   "Description": "🗽 for freedom",// 说明，显示在主页顶部中间
   "AuthorName": "Ater", // 作者名称，显示在博客列表
+  "FooterText": "", // 页脚内容（可选）
   "EnableBlog": true, // 是否启用博客功能
   "BaseHref": "/blazor-blog/", // 子目录
   "Domain": "https://aterdev.github.io", // 域名，用于 sitemap 与 canonical
@@ -123,6 +124,8 @@ dotnet run .\preview.cs -- .\WebSite
 
 > [!NOTE]
 > `RepositoryUrl` 和 `Branch` 用于生成文档编辑链接；`Domain` 会用于生成 `sitemap.xml` 和页面 canonical。
+>
+> `FooterText` 不为空时，会替换页面底部的默认页脚内容。
 >
 > `EnableBlog` 设置为 `false` 时，将不生成博客页面和博客数据，不显示顶部 Blogs 菜单及主页最新博客，也不会将博客加入 sitemap。
 

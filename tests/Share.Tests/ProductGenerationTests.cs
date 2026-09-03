@@ -130,6 +130,38 @@ public class ProductGenerationTests
     }
 
     [TestMethod]
+    public void Build_RendersConfiguredFooterTextAcrossGeneratedPages()
+    {
+        const string footerText = "Custom footer text";
+        var configPath = CreateFixture(footerText: footerText);
+
+        Command.Build(configPath);
+
+        var generatedPages = new[]
+        {
+            "index.html",
+            "blogs.html",
+            Path.Combine("blogs", "Welcome.html"),
+            "about.html",
+            Path.Combine("docs", "MyDocs.html"),
+            Path.Combine("docs", "MyDocs", "en-us", "1.0", "README.html"),
+            Path.Combine("docs", "MyDocs", "en-us", "1.0", "search.html"),
+            Path.Combine("products", "MyProduct.html"),
+            Path.Combine("products", "MyProduct", "en-us", "Getting Started.html"),
+            Path.Combine("products", "MyProduct", "en-us", "search.html")
+        };
+
+        foreach (var page in generatedPages)
+        {
+            var content = File.ReadAllText(Path.Combine(_output, page));
+            StringAssert.Contains(content, "class=\"footer-text\"");
+            StringAssert.Contains(content, footerText);
+            Assert.IsFalse(content.Contains("Powered by EasyDocs", StringComparison.Ordinal));
+            Assert.IsFalse(content.Contains("@{FooterText}", StringComparison.Ordinal));
+        }
+    }
+
+    [TestMethod]
     public void Build_UsesRootBaseHrefForDocsAndProducts()
     {
         var configPath = CreateFixture(baseHref: "/");
@@ -217,7 +249,7 @@ public class ProductGenerationTests
         Assert.ThrowsException<InvalidOperationException>(() => Command.Build(configPath));
     }
 
-    private string CreateFixture(bool useUppercaseAbout = false, string baseHref = "/test-site/", bool enableBlog = true)
+    private string CreateFixture(bool useUppercaseAbout = false, string baseHref = "/test-site/", bool enableBlog = true, string? footerText = null)
     {
         Directory.CreateDirectory(Path.Combine(_content, "blogs"));
         Directory.CreateDirectory(Path.Combine(_content, "docs", "MyDocs", "en-us", "1.0"));
@@ -247,6 +279,7 @@ public class ProductGenerationTests
             Name = "EasyDocs Test",
             Description = "Test site",
             AuthorName = "Test",
+            FooterText = footerText,
             EnableBlog = enableBlog,
             ContetPath = _content,
             OutputPath = _output,

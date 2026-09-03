@@ -221,6 +221,7 @@ public class HtmlBuilder : BaseBuilder
             .Replace("@{BaseUrl}", BaseUrl)
             .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
             .Replace("@{Name}", WebInfo.Name)
+            .Replace("@{FooterText}", GetFooterText())
             .Replace("@{ExtensionHead}", extensionHead)
             .Replace("@{DocAuthor}", System.Net.WebUtility.HtmlEncode(authorName))
             .Replace("@{UpdateTime}", updateTime.ToString("yyyy-MM-dd HH:mm"))
@@ -542,7 +543,8 @@ public class HtmlBuilder : BaseBuilder
                 .Replace("@{docs}", docSb.ToString())
                 .Replace("@{products}", productSb.ToString())
                 .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
-                .Replace("@{BaseUrl}", BaseUrl);
+                .Replace("@{BaseUrl}", BaseUrl)
+                .Replace("@{FooterText}", GetFooterText());
 
             File.WriteAllText(indexPath, indexHtml, Encoding.UTF8);
             Command.LogSuccess("update index.html");
@@ -581,7 +583,8 @@ public class HtmlBuilder : BaseBuilder
                 .Replace("@{BaseUrl}", BaseUrl)
                 .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
                 .Replace("@{blogList}", blogHtml)
-                .Replace("@{siderbar}", siderBarHtml);
+                .Replace("@{siderbar}", siderBarHtml)
+                .Replace("@{FooterText}", GetFooterText());
 
             File.WriteAllText(indexPath, indexHtml, Encoding.UTF8);
             Command.LogSuccess("update blogs.html");

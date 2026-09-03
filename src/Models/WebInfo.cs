@@ -25,6 +25,11 @@ public class WebInfo
     public string AuthorName { get; set; } = "Ater";
 
     /// <summary>
+    /// 页脚内容，为空时使用默认页脚。
+    /// </summary>
+    public string? FooterText { get; set; }
+
+    /// <summary>
     /// 是否启用博客功能。
     /// </summary>
     public bool EnableBlog { get; set; } = true;

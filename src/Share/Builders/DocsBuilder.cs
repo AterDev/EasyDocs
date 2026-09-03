@@ -43,7 +43,8 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         TraverseDirectory(docRootPath, docsCatalog);
 
         var tplContent = TemplateHelper.GetTplContent("docs.html");
-        tplContent = tplContent.Replace("@{Name}", WebInfo.Name);
+        tplContent = tplContent.Replace("@{Name}", WebInfo.Name)
+            .Replace("@{FooterText}", GetFooterText());
 
         var genFiles = new List<GenFile>();
         // Track first doc for each docInfo to generate static homepage
@@ -344,6 +345,7 @@ public class DocsBuilder(WebInfo webInfo) : BaseBuilder(webInfo)
         var htmlContent = tplContent.Replace("@{BaseUrl}", BaseUrl)
             .Replace("@{FaviconPath}", WebInfo.Icon ?? "favicon.ico")
             .Replace("@{Name}", WebInfo.Name)
+            .Replace("@{FooterText}", GetFooterText())
             .Replace("@{Title}", title)
             .Replace("@{Description}", WebInfo.Description)
             .Replace("@{Keywords}", GetPageKeywords("search"))

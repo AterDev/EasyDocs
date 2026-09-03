@@ -143,6 +143,16 @@ public partial class BaseBuilder
         return $"{titlePart}{name},{author}{blogKeyword},docs,documentation";
     }
 
+    protected string GetFooterText()
+    {
+        if (!string.IsNullOrWhiteSpace(WebInfo.FooterText))
+        {
+            return WebInfo.FooterText!;
+        }
+
+        return $"{WebInfo.Name}\n<a class=\"footer-link\" target=\"_blank\" href=\"https://github.com/AterDev/EasyBlog\">Powered by EasyDocs</a>";
+    }
+
     /// <summary>
     /// 内容页TOC
     /// </summary>

@@ -67,8 +67,7 @@
   <div class="site-footer">
     <div class="layout-container">
         <p class="footer-text">
-        @{Name}
-        <a class="footer-link" target="_blank" href="https://github.com/AterDev/EasyBlog">Powered by EasyDocs</a>
+        @{FooterText}
         </p>
     </div>
   </div>

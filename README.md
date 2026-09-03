@@ -82,6 +82,7 @@ dotnet run .\preview.cs -- .\WebSite
   "Name": "Niltor Blog",
   "Description": "A personal blog and documentation site",
   "AuthorName": "Ater",
+  "FooterText": "",
   "EnableBlog": true,
   "ContetPath": "./Content",
   "OutputPath": "./WebSite",
@@ -118,6 +119,7 @@ Important configuration details:
 - `BaseHref` must end with `/`. Use `/` when the site is deployed at the domain root.
 - `Domain` is optional. When set, it is used for page canonical URLs and for `sitemap.xml`.
 - `RepositoryUrl` and `Branch` are optional. When set, they enable documentation edit links.
+- `FooterText` is optional. When set, it replaces the default content in the page footer.
 - `EnableBlog` controls blog generation. Set it to `false` to omit the Blogs navigation, homepage blog cards, blog pages/data, and blog sitemap entries.
 - `Icon` is the favicon path relative to the generated site. `Logo` is used for the site/documentation presentation where applicable.
 - Each `DocInfos[].Name`, language, and version must match the corresponding directory names under `Content/docs`.
