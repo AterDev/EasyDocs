@@ -17,7 +17,7 @@
       "Logo": "logo.svg",
       "Description": "The MyProduct documentation fixture.",
       "Languages": ["en-us", "zh-cn"],
-      "Versions": ["1.0"]
+      "Versions": ["1.0", "2.0"]
     }
   ],
   "ProductInfos": [

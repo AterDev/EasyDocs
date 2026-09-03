@@ -857,6 +857,198 @@
     white-space: inherit;
 }
 
+/* Mermaid diagrams are rendered after page load, so keep their controls and
+   viewport outside of the generated SVG. */
+.mermaid-viewer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 1rem 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+}
+
+.mermaid-action-bar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+}
+
+.mermaid-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    font: inherit;
+    line-height: 1;
+}
+
+.mermaid-control:hover,
+.mermaid-control:focus-visible,
+.mermaid-control[aria-pressed="true"] {
+    border-color: var(--color-border);
+    background: var(--color-nav-active);
+    color: var(--color-header-text);
+    outline: none;
+}
+
+.mermaid-control:focus-visible {
+    box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.mermaid-viewport {
+    position: relative;
+    flex: 1 1 auto;
+    height: clamp(240px, 55vh, 600px);
+    min-height: 240px;
+    overflow: hidden;
+    background: var(--color-surface);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.mermaid-viewport:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
+.mermaid-viewport.is-dragging {
+    cursor: grabbing;
+}
+
+.mermaid-pan-disabled .mermaid-viewport {
+    cursor: default;
+}
+
+.mermaid-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: max-content;
+}
+
+.mermaid-stage > pre.mermaid {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    color: inherit;
+    white-space: normal;
+}
+
+.mermaid-stage > pre.mermaid > svg {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: none !important;
+}
+
+.mermaid-preview {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.72);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.mermaid-preview.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.mermaid-preview-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(1600px, 96vw);
+    height: min(1000px, 94vh);
+    max-height: 94vh;
+    overflow: hidden;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.mermaid-preview-body {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.mermaid-preview-body > .mermaid-viewer {
+    height: 100%;
+    margin: 0;
+}
+
+.mermaid-preview-body .mermaid-viewport {
+    height: auto;
+    min-height: 0;
+}
+
+.mermaid-preview-body .mermaid-action-bar {
+    padding-right: 3.25rem;
+}
+
+.mermaid-preview-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 3;
+    pointer-events: auto;
+}
+
+body.mermaid-preview-open {
+    overflow: hidden;
+}
+
+@media (max-width: 640px) {
+    .mermaid-preview {
+        padding: 0;
+    }
+
+    .mermaid-preview-panel {
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        border: 0;
+        border-radius: 0;
+        padding: 0.5rem;
+    }
+
+    .mermaid-preview-close {
+        top: 0.75rem;
+        right: 0.75rem;
+    }
+}
+
 /* Mermaid's default SVG colors are too dark for the dark markdown theme. */
 .markdown-content pre>svg>.messageText,
 .markdown-content pre>svg .messageText {

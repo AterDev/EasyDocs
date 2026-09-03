@@ -42,22 +42,22 @@ class Docs {
       }
     });
 
-    // set selected value for version select
-    const versionSelect = document.getElementById('versionSelect');
-    if (versionSelect) {
+    // The document template contains one selector for the desktop sidebar and
+    // another one for the mobile drawer. Keep both selectors in sync and bind
+    // the change handler to both of them.
+    const versionSelects = document.querySelectorAll('#versionSelect');
+    versionSelects.forEach(versionSelect => {
       const options = versionSelect.querySelectorAll('option');
       options.forEach(option => {
-        if (option.value === this.version) {
-          option.selected = true;
+        option.selected = option.value === this.version;
+      });
+
+      versionSelect.addEventListener('change', () => {
+        const selectedValue = versionSelect.value;
+        if (selectedValue !== self.version) {
+          self.redirectToVersion(selectedValue);
         }
       });
-    }
-
-    document.getElementById('versionSelect')?.addEventListener('change', function () {
-      const selectedValue = this.value;
-      if (selectedValue != this.version) {
-        self.redirectToVersion(selectedValue);
-      }
     });
 
     var toggler = document.getElementsByClassName("caret");

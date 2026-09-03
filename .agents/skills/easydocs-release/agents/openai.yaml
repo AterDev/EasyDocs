@@ -1,0 +1,4 @@
+interface:
+  display_name: "EasyDocs Release"
+  short_description: "Test and publish EasyDocs to NuGet"
+  default_prompt: "Use $easydocs-release to run the authorized EasyDocs release workflow."

@@ -5,6 +5,8 @@ const productEnglish = `${baseHref}products/MyProduct/en-us/Getting%20Started.ht
 const productChinese = `${baseHref}products/MyProduct/zh-cn/Getting%20Started.html`;
 const productSearch = `${baseHref}products/MyProduct/en-us/search.html`;
 const docsHomepage = `${baseHref}docs/MyProduct.html`;
+const docsDetail = `${baseHref}docs/MyProduct/en-us/1.0/Overview.html`;
+const blogDetail = `${baseHref}blogs/Welcome.html`;
 
 test.describe('generated EasyDocs product site', () => {
   test('homepage exposes Docs and Products navigation', async ({ page }) => {
@@ -164,6 +166,70 @@ test.describe('generated EasyDocs product site', () => {
       'href',
       /\/e2e\/css\//
     );
+  });
+  test('enables Mermaid controls on documentation and blog detail pages', async ({ page }) => {
+    await page.route(
+      'https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js',
+      route => route.fulfill({
+        contentType: 'text/javascript',
+        body: `window.mermaid = {
+          initialize() {},
+          run({ nodes }) {
+            nodes.forEach(node => {
+              node.innerHTML = '<svg viewBox="0 0 1000 500" aria-label="test chart"></svg>';
+              node.setAttribute('data-processed', 'true');
+            });
+            return Promise.resolve();
+          }
+        };`
+      })
+    );
+
+    for (const detailPage of [docsDetail, blogDetail]) {
+      await page.goto(detailPage);
+      const viewer = page.locator('.mermaid-viewer');
+      await expect(viewer).toHaveCount(1);
+      await expect(viewer.locator('.mermaid-control')).toHaveCount(4);
+      await expect(viewer.locator('svg')).toBeVisible();
+
+      const stage = viewer.locator('.mermaid-stage');
+      const initialDimensions = await viewer.locator('svg').evaluate(svg => ({
+        width: Number.parseFloat(svg.getAttribute('width')),
+        height: Number.parseFloat(svg.getAttribute('height'))
+      }));
+      await viewer.locator('[data-mermaid-action="zoom-in"]').click();
+      const zoomedDimensions = await viewer.locator('svg').evaluate(svg => ({
+        width: Number.parseFloat(svg.getAttribute('width')),
+        height: Number.parseFloat(svg.getAttribute('height'))
+      }));
+      expect(zoomedDimensions.width).toBeGreaterThan(initialDimensions.width);
+      expect(await stage.evaluate(element => getComputedStyle(element).transform)).toBe('none');
+
+      await viewer.locator('[data-mermaid-action="zoom-out"]').click();
+      await viewer.locator('[data-mermaid-action="zoom-out"]').click();
+      const zoomedOutWidth = await viewer.locator('svg').evaluate(svg =>
+        Number.parseFloat(svg.getAttribute('width')));
+      expect(zoomedOutWidth).toBeLessThan(initialDimensions.width);
+
+      await viewer.locator('[data-mermaid-action="preview"]').click();
+      await expect(page.locator('.mermaid-preview')).toBeVisible();
+      await page.locator('[data-mermaid-action="close-preview"]').click();
+      await expect(page.locator('.mermaid-preview')).toHaveCount(0);
+    }
+  });
+
+  test('desktop documentation version selector navigates and stays selected', async ({ page }) => {
+    await page.goto(docsDetail);
+
+    const versionSelects = page.locator('#versionSelect');
+    await expect(versionSelects).toHaveCount(2);
+    await expect(versionSelects.nth(0)).toHaveValue('1.0');
+    await expect(versionSelects.nth(1)).toHaveValue('1.0');
+
+    await versionSelects.nth(1).selectOption('2.0');
+    await expect(page).toHaveURL(/\/docs\/MyProduct\/en-us\/2\.0\/Overview\.html$/);
+    await expect(page.locator('#versionSelect').nth(0)).toHaveValue('2.0');
+    await expect(page.locator('#versionSelect').nth(1)).toHaveValue('2.0');
   });
 });
 
